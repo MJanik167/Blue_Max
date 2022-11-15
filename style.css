@@ -1,0 +1,46 @@
+body {
+  background-color: black;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding-top: 1vh;
+}
+
+
+#canvas {
+  position: relative;
+  border: 1px solid white;
+  background-color: green;
+  grid-area: 1 /2;
+}
+
+#container {
+  margin-top: 2vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: flex-start;
+  grid-area: 2 /2;
+}
+
+@font-face {
+  font-family: bit;
+  src: url('assets/font.ttf');
+}
+
+#container>div>div>h1 {
+  color: white;
+  display: inline-block;
+  margin: 0;
+  font-size: 30px;
+  margin-right: 0.2vw;
+  font-family: bit;
+}
+
+#container>div {
+  display: flex;
+  flex-direction: row;
+}
+
+#container>div>div {
+  margin-right: 2vw;
+}

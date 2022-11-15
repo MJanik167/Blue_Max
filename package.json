@@ -1,0 +1,28 @@
+{
+  "name": "blue_max",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000B\u0000l\u0000u\u0000e\u0000_\u0000M\u0000a\u0000x\u0000\r\u0000 \u0000",
+  "main": "index.js",
+  "dependencies": {
+    "typescript": "^4.8.4",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0"
+  },
+  "devDependencies": {
+    "ts-loader": "^9.4.1"
+  },
+  "scripts": {
+    "dev": "webpack --mode development",
+    "prod": "webpack --mode production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MJanik167/Blue_Max.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MJanik167/Blue_Max/issues"
+  },
+  "homepage": "https://github.com/MJanik167/Blue_Max#readme"
+}
