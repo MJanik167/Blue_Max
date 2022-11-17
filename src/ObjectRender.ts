@@ -7,7 +7,7 @@ export default class ObjectRender {
   ctx: CanvasRenderingContext2D
   texture: HTMLImageElement
   coordinates: coords
-  constructor(ctx: CanvasRenderingContext2D, texture: string, positionX: number, positionY: number) {
+  constructor(ctx: CanvasRenderingContext2D, texture: string, positionX?: number, positionY?: number) {
     this.ctx = ctx
     this.texture = document.createElement("img")
     this.texture.setAttribute("src", `../assets/${texture}.png`)

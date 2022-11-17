@@ -8,9 +8,10 @@ const directions: { [directions in Directions]: string[] } = {
   up: ["ArrowUp", "w", "W"],
   down: ["ArrowDown", "s", "S"],
 }
+
 const angles: { [angles in Directions]: number } = {
-  left: Math.PI,
-  right: Math.PI * 2,
+  left: Math.PI * 1.1,
+  right: Math.PI * 0.1,
   up: Math.PI * 1.5,
   down: Math.PI * 0.5
 }
@@ -20,22 +21,22 @@ export default class Plane extends ObjectRender {
   sensitivity: number
   constructor(ctx: CanvasRenderingContext2D, texture: string, positionX: number, positionY: number) {
     super(ctx, "plane", positionX, positionY)
-    this.sensitivity = 10
+    this.sensitivity = 5
     this.coordinates = {
       x: 350,
       y: 350
     }
     this.pressedKeys = []
-    window.addEventListener("keydown", this.action)
+    window.addEventListener("keydown", this.press)
     window.addEventListener("keyup", this.release)
   }
 
-  action = (event: KeyboardEvent) => {
+  press = (event: KeyboardEvent) => {
+    console.log(event.key)
     for (let direction in directions) {
       if (directions[direction as Directions].includes(event.key))
         if (this.pressedKeys.includes(direction as Directions)) { return }
         else this.pressedKeys.push(direction as Directions)
-      console.log(angles[direction as Directions])
     }
   }
 

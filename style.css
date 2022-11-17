@@ -1,8 +1,14 @@
+html,
 body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  position: relative;
   background-color: black;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  padding-top: 1vh;
 }
 
 
@@ -11,6 +17,7 @@ body {
   border: 1px solid white;
   background-color: green;
   grid-area: 1 /2;
+  align-self: flex-end;
 }
 
 #container {
