@@ -30,7 +30,7 @@ export default class Game {
         this.frame()
     }
 
-    createEntity = (object: GameObject, image: string, isEntity: boolean, positionX?: number, positionY?: number) => {
+    createInstance = (object: GameObject, image: string, isEntity: boolean, positionX?: number, positionY?: number) => {
         if (isEntity)
             this.entities.push(new object(this.ctx, image, positionX, positionY))
         else

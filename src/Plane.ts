@@ -10,8 +10,8 @@ const directions: { [directions in Directions]: string[] } = {
 }
 
 const angles: { [angles in Directions]: number } = {
-  left: Math.PI * 1.1,
-  right: Math.PI * 0.1,
+  left: Math.PI * 1.05,
+  right: Math.PI * 0.05,
   up: Math.PI * 1.5,
   down: Math.PI * 0.5
 }
@@ -20,7 +20,7 @@ export default class Plane extends ObjectRender {
   pressedKeys: Array<Directions>
   sensitivity: number
   constructor(ctx: CanvasRenderingContext2D, texture: string, positionX: number, positionY: number) {
-    super(ctx, "plane", positionX, positionY)
+    super(ctx, texture, positionX, positionY)
     this.sensitivity = 5
     this.coordinates = {
       x: 350,
