@@ -1,11 +1,13 @@
-interface coords {
-  x: number
-  y: number
+type angles = "x" | "y"
+
+const angles: { [angle in angles]: number } = {
+  x: Math.PI * .7,
+  y: Math.PI * .2
 }
 
-const angles = {
-  x: Math.PI,
-  y: Math.PI * .5
+interface coords {
+  x: number,
+  y: number
 }
 
 export default class ObjectRender {
