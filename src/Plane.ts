@@ -1,4 +1,4 @@
-import ObjectRender from "./ObjectRender";
+import ObjectRender from "./ObjectRender.js";
 
 type Directions = "left" | "right" | "up" | "down"
 
@@ -19,8 +19,10 @@ const angles: { [angles in Directions]: number } = {
 export default class Plane extends ObjectRender {
   pressedKeys: Array<Directions>
   sensitivity: number
-  constructor(ctx: CanvasRenderingContext2D, texture: string, positionX: number, positionY: number) {
-    super(ctx, texture, positionX, positionY)
+  increaseSpeed: () => void
+  constructor(ctx: CanvasRenderingContext2D, texture: string, increaseSpeed: () => void) {
+    super(ctx, texture)
+    this.increaseSpeed = increaseSpeed
     this.sensitivity = 5
     this.coordinates = {
       x: 350,
@@ -32,6 +34,7 @@ export default class Plane extends ObjectRender {
   }
 
   press = (event: KeyboardEvent) => {
+    event.preventDefault()
     console.log(event.key)
     for (let direction in directions) {
       if (directions[direction as Directions].includes(event.key))
@@ -50,6 +53,7 @@ export default class Plane extends ObjectRender {
 
   render = () => {
     if (this.pressedKeys.length != 0) {
+      this.increaseSpeed()
       this.pressedKeys.forEach(e =>
         this.coordinates = {
           x: this.coordinates.x + this.sensitivity * Math.cos(angles[e as Directions]),

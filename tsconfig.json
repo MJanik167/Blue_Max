@@ -5,6 +5,27 @@
     "module": "es6",
     "target": "es5",
     "jsx": "react",
-    "allowJs": true
-  }
+    "allowJs": true,
+    "lib": [
+      "esnext",
+      "dom"
+    ],
+    "checkJs": true,
+    "noEmit": false,
+    "strict": true,
+    "moduleResolution": "node",
+    "typeRoots": [
+      "src/types/*"
+    ],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true
+  },
+  "include": [
+    "src/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }
