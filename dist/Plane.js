@@ -50,20 +50,20 @@ var Plane = /** @class */ (function (_super) {
         _this.render = function () {
             if (_this.pressedKeys.length != 0) {
                 _this.increaseSpeed();
-                if (_this.sensitivity <= _this.maxSensitivity)
-                    _this.sensitivity += 0.05;
+                if (_this.velocity <= _this.maxvelocity)
+                    _this.velocity += 0.05;
                 _this.pressedKeys.forEach(function (e) {
                     return _this.coordinates = {
-                        x: _this.coordinates.x + _this.sensitivity * Math.cos(angles[e]),
-                        y: _this.coordinates.y + _this.sensitivity * Math.sin(angles[e])
+                        x: _this.coordinates.x + _this.velocity * Math.cos(angles[e]),
+                        y: _this.coordinates.y + _this.velocity * Math.sin(angles[e])
                     };
                 });
             }
             _this.ctx.drawImage(_this.texture, _this.coordinates.x, _this.coordinates.y);
         };
         _this.increaseSpeed = increaseSpeed;
-        _this.sensitivity = 0;
-        _this.maxSensitivity = 10;
+        _this.velocity = 0;
+        _this.maxvelocity = 10;
         _this.coordinates = {
             x: 350,
             y: 350

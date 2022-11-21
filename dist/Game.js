@@ -54,10 +54,15 @@ var Game = /** @class */ (function () {
         this.frame = function () { return __awaiter(_this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
-                if (this.speed.now > 0 && Date.now() % 2 == 0)
-                    this.createInstance(ObjectRender, "tree1", false, 100 + Math.floor(Math.random() * 900), -100);
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                this.instances.objects.forEach(function (e) { return e.render(_this.speed.now); });
+                this.instances.objects.forEach(function (e) {
+                    if (e.coordinates.x < -100 || e.coordinates.y < -100) {
+                        var index = _this.instances.objects.findIndex(function (el) { return el == e; });
+                        _this.instances.objects.splice(index, 1, new ObjectRender(_this.ctx, "tree1", Math.floor(Math.random() * 900), -100));
+                    }
+                    else
+                        e.render(_this.speed.now);
+                });
                 this.instances.entities.forEach(function (e) { return e.render(_this.speed.now); });
                 requestAnimationFrame(this.frame);
                 return [2 /*return*/];
@@ -77,7 +82,7 @@ var Game = /** @class */ (function () {
         this.ctx = ctx;
         this.instances = {
             entities: new Array(1).fill(new Plane(this.ctx, "plane", this.increaseSpeed)),
-            objects: new Array(0)
+            objects: new Array(100).fill(null).map(function (e) { return new ObjectRender(_this.ctx, "tree1", Math.floor(Math.random() * 900), Math.floor(Math.random() * 600)); })
         };
         this.frame();
     }

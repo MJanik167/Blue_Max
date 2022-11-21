@@ -19,7 +19,7 @@ interface playerInfo {
 
 interface instances {
     entities: Array<GameEntities>,
-    objects: Array<GameEntities>
+    objects: Array<GameEntities | null>
 }
 
 export default class Game {
@@ -43,7 +43,7 @@ export default class Game {
         this.ctx = ctx
         this.instances = {
             entities: new Array<GameEntities>(1).fill(new Plane(this.ctx, "plane", this.increaseSpeed)),
-            objects: new Array<GameEntities>(0)
+            objects: new Array<GameEntities | null>(100).fill(null).map(e => new ObjectRender(this.ctx, "tree1", Math.floor(Math.random() * 900), Math.floor(Math.random() * 600)))
         }
         this.frame()
     }
@@ -61,9 +61,14 @@ export default class Game {
     }
 
     frame = async () => {
-        if (this.speed.now > 0 && Date.now() % 2 == 0) this.createInstance(ObjectRender, "tree1", false, 100 + Math.floor(Math.random() * 900), -100)
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-        this.instances.objects.forEach(e => e.render(this.speed.now))
+        this.instances.objects.forEach(e => {
+            if (e!.coordinates.x < -100 || e!.coordinates.y < -100) {
+                let index = this.instances.objects.findIndex(el => el == e)
+                this.instances.objects.splice(index, 1, new ObjectRender(this.ctx, "tree1", Math.floor(Math.random() * 900), -100))
+            } else
+                e!.render(this.speed.now)
+        })
         this.instances.entities.forEach(e => e.render(this.speed.now))
         requestAnimationFrame(this.frame)
     }
