@@ -64,7 +64,7 @@ export default class Game {
         this.canvas = canvas
         this.ctx = ctx
         this.instances = {
-            entities: new Array<GameEntities>(1).fill(new Plane(this.ctx, "plane3", this.increaseSpeed)),
+            entities: new Array<GameEntities>(1).fill(new Plane(this.ctx, "plane", this.increaseSpeed)),
             objects: new Array<GameEntities>(0)
         }
         this.frame()

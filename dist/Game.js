@@ -57,6 +57,8 @@ var Game = /** @class */ (function () {
         this.frame = function () { return __awaiter(_this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
+                if (this.speed.now > 0 && Date.now() % 2 == 0)
+                    this.createInstance(ObjectRender, "tree1", false, 100 + Math.floor(Math.random() * 900), -100);
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
                 this.ctx.drawImage(this.background.src, this.background.x += Math.cos(angles.x) * this.speed.now, this.background.y += Math.cos(angles.y) * this.speed.now, 1980 * 3, 1080 * 3);
                 // if (this.speed.now > 0 && Date.now() % 2 == 0) this.createInstance(ObjectRender, "tree1", false, 100 + Math.floor(Math.random() * 900), -100)
@@ -89,7 +91,7 @@ var Game = /** @class */ (function () {
         this.canvas = canvas;
         this.ctx = ctx;
         this.instances = {
-            entities: new Array(1).fill(new Plane(this.ctx, "plane3", this.increaseSpeed)),
+            entities: new Array(1).fill(new Plane(this.ctx, "plane", this.increaseSpeed)),
             objects: new Array(0)
         };
         this.frame();
