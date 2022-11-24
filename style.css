@@ -15,7 +15,7 @@ body {
 #canvas {
   position: relative;
   border: 1px solid white;
-  background-color: green;
+  /* background-color: green; */
   grid-area: 1 /2;
   align-self: flex-end;
 }

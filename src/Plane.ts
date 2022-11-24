@@ -25,7 +25,7 @@ export default class Plane extends ObjectRender {
     super(ctx, texture)
     this.increaseSpeed = increaseSpeed
     this.sensitivity = 0
-    this.maxSensitivity = 10
+    this.maxSensitivity = 5
     this.coordinates = {
       x: 350,
       y: 350

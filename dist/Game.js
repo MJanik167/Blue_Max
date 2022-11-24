@@ -34,8 +34,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import ObjectRender from "./ObjectRender.js";
 import Plane from "./Plane.js";
+var angles = {
+    x: Math.PI * .7,
+    y: Math.PI * .2
+};
 var Game = /** @class */ (function () {
     function Game(canvas, ctx) {
         var _this = this;
@@ -54,10 +57,13 @@ var Game = /** @class */ (function () {
         this.frame = function () { return __awaiter(_this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
-                if (this.speed.now > 0 && Date.now() % 2 == 0)
-                    this.createInstance(ObjectRender, "tree1", false, 100 + Math.floor(Math.random() * 900), -100);
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                this.instances.objects.forEach(function (e) { return e.render(_this.speed.now); });
+                this.ctx.drawImage(this.background.src, this.background.x += Math.cos(angles.x) * this.speed.now, this.background.y += Math.cos(angles.y) * this.speed.now, 1980 * 3, 1080 * 3);
+                // if (this.speed.now > 0 && Date.now() % 2 == 0) this.createInstance(ObjectRender, "tree1", false, 100 + Math.floor(Math.random() * 900), -100)
+                // this.instances.objects.forEach(e => {
+                //     e.render(this.speed.now)
+                // })
+                console.log(this.instances.objects.length);
                 this.instances.entities.forEach(function (e) { return e.render(_this.speed.now); });
                 requestAnimationFrame(this.frame);
                 return [2 /*return*/];
@@ -65,7 +71,7 @@ var Game = /** @class */ (function () {
         }); };
         this.speed = {
             now: 0,
-            max: 5
+            max: 3
         };
         this.playerInfo = {
             score: 0,
@@ -73,10 +79,17 @@ var Game = /** @class */ (function () {
             bombs: 0,
             altitude: 0
         };
+        var img = document.createElement("img");
+        img.setAttribute("src", "../assets/background.png");
+        this.background = {
+            src: img,
+            x: -800,
+            y: -img.height - 1000
+        };
         this.canvas = canvas;
         this.ctx = ctx;
         this.instances = {
-            entities: new Array(1).fill(new Plane(this.ctx, "plane", this.increaseSpeed)),
+            entities: new Array(1).fill(new Plane(this.ctx, "plane3", this.increaseSpeed)),
             objects: new Array(0)
         };
         this.frame();

@@ -63,7 +63,7 @@ var Plane = /** @class */ (function (_super) {
         };
         _this.increaseSpeed = increaseSpeed;
         _this.sensitivity = 0;
-        _this.maxSensitivity = 10;
+        _this.maxSensitivity = 5;
         _this.coordinates = {
             x: 350,
             y: 350
