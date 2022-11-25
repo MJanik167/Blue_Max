@@ -26,6 +26,11 @@ var angles = {
     up: Math.PI * 1.5,
     down: Math.PI * 0.5
 };
+var planeStates = {
+    idle: ["plane1.png", "plane2.png"],
+    left: ["left1.png", "left2.png"],
+    right: ["right1.png", "right2.png"]
+};
 var Plane = /** @class */ (function (_super) {
     __extends(Plane, _super);
     function Plane(ctx, texture, increaseSpeed) {
@@ -39,7 +44,7 @@ var Plane = /** @class */ (function (_super) {
                     else
                         _this.pressedKeys.push(direction);
             }
-            if (event.key == "")
+            if (event.key === " ")
                 _this.shoot();
         };
         _this.release = function (event) {
@@ -50,6 +55,7 @@ var Plane = /** @class */ (function (_super) {
             }
         };
         _this.shoot = function () {
+            console.log("💩💩💩💩💩💩💩💩💩💩💩💩");
         };
         _this.render = function () {
             if (_this.pressedKeys.length != 0) {
@@ -63,16 +69,40 @@ var Plane = /** @class */ (function (_super) {
                     };
                 });
             }
+            if (_this.velocity > 0) {
+                if (_this.pressedKeys.includes("left") && _this.pressedKeys.length === 1) {
+                    _this.texture = Date.now() % 3 == 0 ? _this.planeState.left[0] : _this.planeState.left[1];
+                }
+                else if (_this.pressedKeys.includes("right") && _this.pressedKeys.length === 1) {
+                    _this.texture = Date.now() % 3 == 0 ? _this.planeState.right[0] : _this.planeState.right[1];
+                }
+                else {
+                    _this.texture = Date.now() % 3 == 0 ? _this.planeState.idle[0] : _this.planeState.idle[1];
+                }
+            }
             _this.ctx.drawImage(_this.texture, _this.coordinates.x, _this.coordinates.y);
         };
+        _this.pressedKeys = [];
         _this.increaseSpeed = increaseSpeed;
         _this.velocity = 0;
-        _this.maxvelocity = 10;
+        _this.maxvelocity = 5;
         _this.coordinates = {
-            x: 350,
-            y: 350
+            x: 300,
+            y: 400
         };
-        _this.pressedKeys = [];
+        _this.planeState = {
+            idle: [],
+            left: [],
+            right: []
+        };
+        for (var state in planeStates) {
+            (_this.planeState[state]) = (planeStates[state]).map(function (el) {
+                var img = document.createElement("img");
+                img.setAttribute("src", "/assets/".concat(el));
+                return img;
+            });
+        }
+        console.log(_this.planeState);
         window.addEventListener("keydown", _this.press);
         window.addEventListener("keyup", _this.release);
         return _this;

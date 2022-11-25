@@ -54,19 +54,17 @@ export default class Game {
             altitude: 0
         }
         let img = document.createElement("img")
-        img.setAttribute("src", "../assets/background.png")
+        img.setAttribute("src", "../assets/tło.png")
         this.background = {
             src: img,
             x: 0,
             y: img.height - canvas.height
-            // x: -800,
-            // y: -img.height - 1000
         }
 
         this.canvas = canvas
         this.ctx = ctx
         this.instances = {
-            entities: new Array<GameEntities>(1).fill(new Plane(this.ctx, "plane", this.increaseSpeed)),
+            entities: new Array<GameEntities>(1).fill(new Plane(this.ctx, "plane1", this.increaseSpeed)),
             objects: new Array<GameEntities>(0)
         }
         this.frame()
@@ -89,7 +87,7 @@ export default class Game {
         // this.ctx.drawImage(this.background.src, this.background.x += Math.cos(angles.x) * this.speed.now, this.background.y += Math.cos(angles.y) * this.speed.now, 1980 * 3, 1080 * 3)
         this.ctx.drawImage(this.background.src,
             this.background.x -= Math.cos(angles.x) * this.speed.now, this.background.y -= Math.cos(angles.y) * this.speed.now, //pozycja wyciętego fragment na oryginalnym obrazku 
-            this.canvas.width / 2, this.canvas.height / 2, //wielkość wyciętego fragmentu
+            this.canvas.width, this.canvas.height, //wielkość wyciętego fragmentu
             0, 0, // pozycja obrazka na canvasie
             this.canvas.width, this.canvas.height)
         // console.log(this.background.y, this.background.src.height)
