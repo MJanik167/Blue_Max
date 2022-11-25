@@ -53,7 +53,7 @@ export default class Plane extends ObjectRender {
     for (let state in planeStates) {
       (this.planeState[state as states]) = (planeStates[state as states]).map((el): HTMLImageElement => {
         let img: HTMLImageElement = document.createElement("img")
-        img.setAttribute("src", `/assets/${el}`)
+        img.setAttribute("src", `/assets/planeSprites/${el}`)
         return img
       })
     }
