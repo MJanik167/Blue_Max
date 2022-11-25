@@ -39,6 +39,8 @@ var Plane = /** @class */ (function (_super) {
                     else
                         _this.pressedKeys.push(direction);
             }
+            if (event.key == "")
+                _this.shoot();
         };
         _this.release = function (event) {
             for (var direction in directions) {
@@ -46,6 +48,8 @@ var Plane = /** @class */ (function (_super) {
                     if (_this.pressedKeys.includes(direction))
                         _this.pressedKeys.splice(_this.pressedKeys.indexOf(direction));
             }
+        };
+        _this.shoot = function () {
         };
         _this.render = function () {
             if (_this.pressedKeys.length != 0) {

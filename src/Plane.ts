@@ -41,6 +41,8 @@ export default class Plane extends ObjectRender {
         if (this.pressedKeys.includes(direction as Directions)) { return }
         else this.pressedKeys.push(direction as Directions)
     }
+    if (event.key == "")
+      this.shoot()
   }
 
   release = (event: KeyboardEvent) => {
@@ -49,6 +51,11 @@ export default class Plane extends ObjectRender {
         if (this.pressedKeys.includes(direction as Directions))
           this.pressedKeys.splice(this.pressedKeys.indexOf(direction as Directions))
     }
+  }
+
+  shoot = () => {
+
+
   }
 
   render = () => {

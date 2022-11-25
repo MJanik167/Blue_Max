@@ -57,13 +57,22 @@ var Game = /** @class */ (function () {
         this.frame = function () { return __awaiter(_this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                this.ctx.drawImage(this.background.src, this.background.x += Math.cos(angles.x) * this.speed.now, this.background.y += Math.cos(angles.y) * this.speed.now, 1980 * 3, 1080 * 3);
+                // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
+                // this.ctx.drawImage(this.background.src, this.background.x += Math.cos(angles.x) * this.speed.now, this.background.y += Math.cos(angles.y) * this.speed.now, 1980 * 3, 1080 * 3)
+                this.ctx.drawImage(this.background.src, this.background.x -= Math.cos(angles.x) * this.speed.now, this.background.y -= Math.cos(angles.y) * this.speed.now, //pozycja wyciętego fragment na oryginalnym obrazku 
+                this.canvas.width / 2, this.canvas.height / 2, //wielkość wyciętego fragmentu
+                0, 0, // pozycja obrazka na canvasie
+                this.canvas.width, this.canvas.height);
+                // console.log(this.background.y, this.background.src.height)
+                if (this.background.y < 0) {
+                    this.background.y = this.background.src.height - this.canvas.height;
+                    this.background.x = 0;
+                } // rozmiar obrazka na canvasie
                 // if (this.speed.now > 0 && Date.now() % 2 == 0) this.createInstance(ObjectRender, "tree1", false, 100 + Math.floor(Math.random() * 900), -100)
                 // this.instances.objects.forEach(e => {
                 //     e.render(this.speed.now)
                 // })
-                console.log(this.instances.objects.length);
+                // console.log(this.instances.objects.length)
                 this.instances.entities.forEach(function (e) { return e.render(_this.speed.now); });
                 requestAnimationFrame(this.frame);
                 return [2 /*return*/];
@@ -71,7 +80,7 @@ var Game = /** @class */ (function () {
         }); };
         this.speed = {
             now: 0,
-            max: 3
+            max: 2
         };
         this.playerInfo = {
             score: 0,
@@ -83,8 +92,10 @@ var Game = /** @class */ (function () {
         img.setAttribute("src", "../assets/background.png");
         this.background = {
             src: img,
-            x: -800,
-            y: -img.height - 1000
+            x: 0,
+            y: img.height - canvas.height
+            // x: -800,
+            // y: -img.height - 1000
         };
         this.canvas = canvas;
         this.ctx = ctx;
