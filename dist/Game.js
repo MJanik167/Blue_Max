@@ -34,6 +34,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+import Enemy from "./Enemy.js";
 import Plane from "./Plane.js";
 var angles = {
     x: Math.PI * .7,
@@ -55,6 +56,7 @@ var Game = /** @class */ (function () {
         //         this.instances.objects.push(new object(this.ctx, image, positionX, positionY))
         // }
         this.frame = function () { return __awaiter(_this, void 0, void 0, function () {
+            var _loop_1, this_1, instance;
             var _this = this;
             return __generator(this, function (_a) {
                 // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
@@ -68,16 +70,28 @@ var Game = /** @class */ (function () {
                     this.background.y = this.background.src.height - this.canvas.height;
                     this.background.x = 0;
                 } // rozmiar obrazka na canvasie
+                _loop_1 = function (instance) {
+                    this_1.instances[instance].forEach(function (e) {
+                        e.render(_this.speed.now);
+                        if ((e.coordinates.x > _this.canvas.width || e.coordinates.x < 0 - e.texture.width)
+                            || (e.coordinates.y < 0 - e.texture.height || e.coordinates.y > _this.canvas.height))
+                            e.destroy(_this.instances[instance]);
+                    });
+                };
+                this_1 = this;
                 // if (this.speed.now > 0 && Date.now() % 2 == 0) this.createInstance(ObjectRender, "tree1", false, 100 + Math.floor(Math.random() * 900), -100)
-                this.instances.objects.forEach(function (e) {
-                    e.render(_this.speed.now);
-                });
-                this.instances.entities.forEach(function (e) {
-                    e.render(_this.speed.now);
-                    if ((e.coordinates.x > _this.canvas.width || e.coordinates.x < 0 - e.texture.width)
-                        || (e.coordinates.y < 0 - e.texture.height || e.coordinates.y > _this.canvas.height))
-                        e.destroy(_this.instances.entities);
-                });
+                for (instance in this.instances) {
+                    _loop_1(instance);
+                }
+                // this.instances.objects.forEach(e => {
+                //     e.render(this.speed.now)
+                // })
+                // this.instances.entities.forEach(e => {
+                //     e.render(this.speed.now)
+                //     if ((e.coordinates.x > this.canvas.width || e.coordinates.x < 0 - e.texture.width)
+                //         || (e.coordinates.y < 0 - e.texture.height || e.coordinates.y > this.canvas.height))
+                //         e.destroy(this.instances.entities)
+                // })
                 console.log(this.instances.entities);
                 requestAnimationFrame(this.frame);
                 return [2 /*return*/];
@@ -103,9 +117,11 @@ var Game = /** @class */ (function () {
         this.canvas = canvas;
         this.ctx = ctx;
         this.instances = {
-            entities: new Array(1).fill(new Plane(this.ctx, this.increaseSpeed, function (e) { _this.instances.entities.push(e); })),
-            objects: new Array(0)
+            entities: new Array(1).fill(new Plane(this.ctx, this.increaseSpeed, function (e) { _this.instances.projectiles.push(e); })),
+            objects: new Array(0),
+            projectiles: new Array(0)
         };
+        this.instances.entities.push(new Enemy(ctx, 500, 100));
         this.frame();
     }
     return Game;
