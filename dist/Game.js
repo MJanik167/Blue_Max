@@ -72,10 +72,21 @@ var Game = /** @class */ (function () {
                 } // rozmiar obrazka na canvasie
                 _loop_1 = function (instance) {
                     this_1.instances[instance].forEach(function (e) {
-                        e.render(_this.speed.now);
+                        if (instance == "projectiles") {
+                            var target = e.checkForCollision(_this.instances.entities);
+                            for (var instance_1 in _this.instances) {
+                                if (target)
+                                    if (_this.instances[instance_1].includes(target)) {
+                                        target.destroy(_this.instances[instance_1]);
+                                        e.destroy(_this.instances.projectiles);
+                                    }
+                            }
+                        }
                         if ((e.coordinates.x > _this.canvas.width || e.coordinates.x < 0 - e.texture.width)
                             || (e.coordinates.y < 0 - e.texture.height || e.coordinates.y > _this.canvas.height))
                             e.destroy(_this.instances[instance]);
+                        if (_this.instances[instance].includes(e))
+                            e.render(_this.speed.now);
                     });
                 };
                 this_1 = this;
@@ -92,7 +103,7 @@ var Game = /** @class */ (function () {
                 //         || (e.coordinates.y < 0 - e.texture.height || e.coordinates.y > this.canvas.height))
                 //         e.destroy(this.instances.entities)
                 // })
-                console.log(this.instances.entities);
+                //console.log(this.instances.entities)
                 requestAnimationFrame(this.frame);
                 return [2 /*return*/];
             });
@@ -117,10 +128,14 @@ var Game = /** @class */ (function () {
         this.canvas = canvas;
         this.ctx = ctx;
         this.instances = {
-            entities: new Array(1).fill(new Plane(this.ctx, this.increaseSpeed, function (e) { _this.instances.projectiles.push(e); })),
             objects: new Array(0),
+            entities: new Array(1).fill(new Plane(this.ctx, this.increaseSpeed, function (e) { _this.instances.projectiles.push(e); })),
             projectiles: new Array(0)
         };
+        for (var i = 0; i < 10; i++) {
+            this.instances.entities.push(new Enemy(ctx, 100 + 50 * i, 100));
+            this.instances.entities.push(new Enemy(ctx, 100 + 50 * i, 120));
+        }
         this.instances.entities.push(new Enemy(ctx, 500, 100));
         this.frame();
     }

@@ -26,11 +26,11 @@ interface playerInfo {
     altitude: number
 }
 
-type instance = "entities"|"objects"|"projectiles"
+type instance = "entities" | "objects" | "projectiles"
 
 interface instances {
-    entities: GameEntities[],
     objects: GameEntities[],
+    entities: GameEntities[],
     projectiles: GameEntities[]
 }
 
@@ -69,11 +69,15 @@ export default class Game {
         this.canvas = canvas
         this.ctx = ctx
         this.instances = {
-            entities: new Array<GameEntities>(1).fill(new Plane(this.ctx, this.increaseSpeed, (e: Projectile): void => { this.instances.projectiles.push(e) })),
             objects: new Array<GameEntities>(0),
+            entities: new Array<GameEntities>(1).fill(new Plane(this.ctx, this.increaseSpeed, (e: Projectile): void => { this.instances.projectiles.push(e) })),
             projectiles: new Array<GameEntities>(0)
         }
-        this.instances.entities.push(new Enemy(ctx,500,100))
+        for (let i = 0; i < 10; i++) {
+            this.instances.entities.push(new Enemy(ctx, 100 + 50 * i, 100))
+            this.instances.entities.push(new Enemy(ctx, 100 + 50 * i, 120))
+        }
+        this.instances.entities.push(new Enemy(ctx, 500, 100))
         this.frame()
     }
 
@@ -105,14 +109,25 @@ export default class Game {
             this.background.x = 0
         } // rozmiar obrazka na canvasie
         // if (this.speed.now > 0 && Date.now() % 2 == 0) this.createInstance(ObjectRender, "tree1", false, 100 + Math.floor(Math.random() * 900), -100)
-        for(let instance in this.instances){
+        for (let instance in this.instances) {
             this.instances[instance as instance].forEach(e => {
-                e.render(this.speed.now)
+                if (instance == "projectiles" as instance) {
+                    let target = (e as Projectile).checkForCollision(this.instances.entities)
+                    for (let instance in this.instances) {
+                        if (target)
+                            if (this.instances[instance as instance].includes(target)) {
+                                target.destroy(this.instances[instance as instance])
+                                e.destroy(this.instances.projectiles)
+                            }
+                    }
+                }
                 if ((e.coordinates.x > this.canvas.width || e.coordinates.x < 0 - e.texture.width)
                     || (e.coordinates.y < 0 - e.texture.height || e.coordinates.y > this.canvas.height))
-                    e.destroy(this.instances[instance as instance ])
+                    e.destroy(this.instances[instance as instance])
+                if (this.instances[instance as instance].includes(e)) e.render(this.speed.now)
             })
         }
+
         // this.instances.objects.forEach(e => {
         //     e.render(this.speed.now)
         // })
@@ -122,7 +137,7 @@ export default class Game {
         //         || (e.coordinates.y < 0 - e.texture.height || e.coordinates.y > this.canvas.height))
         //         e.destroy(this.instances.entities)
         // })
-        console.log(this.instances.entities)
+        //console.log(this.instances.entities)
         requestAnimationFrame(this.frame)
     }
 }

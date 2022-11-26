@@ -17,14 +17,19 @@ import ObjectRender from "./ObjectRender.js";
 var Enemy = /** @class */ (function (_super) {
     __extends(Enemy, _super);
     function Enemy(ctx, positionX, positionY) {
-        return _super.call(this, ctx, undefined, positionX, positionY) || this;
+        var _this = _super.call(this, ctx, undefined, positionX, positionY) || this;
+        _this.hitboxRadius = 20;
+        return _this;
     }
     Enemy.prototype.render = function (speed) {
         this.ctx.beginPath();
-        this.ctx.arc(this.coordinates.x, this.coordinates.y, 20, 0, Math.PI * 2);
+        this.ctx.arc(this.coordinates.x + this.hitboxRadius * .5, this.coordinates.y + this.hitboxRadius * .5, 20, 0, Math.PI * 2);
         this.ctx.stroke();
     };
     Enemy.prototype.destroy = function (array) {
+        var _this = this;
+        var index = array.findIndex(function (e) { return e === _this; });
+        array.splice(index, 1);
     };
     return Enemy;
 }(ObjectRender));

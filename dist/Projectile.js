@@ -24,12 +24,13 @@ var Projectile = /** @class */ (function (_super) {
                 if (Math.sqrt(Math.pow(_this.coordinates.x - e.coordinates.x, 2) + Math.pow(_this.coordinates.y - e.coordinates.y, 2)) < _this.hitboxRadius + e.hitboxRadius)
                     object = e;
             });
+            console.log(object);
             return object;
         };
         var texture = document.createElement("img");
         texture.setAttribute("src", "/assets/projectile.png");
         _this.texture = texture;
-        _this.hitboxRadius = 5;
+        _this.hitboxRadius = 10;
         return _this;
     }
     Projectile.prototype.render = function (speed) {

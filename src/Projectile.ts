@@ -7,15 +7,16 @@ export default class Projectile extends ObjectRender {
         let texture = document.createElement("img")
         texture.setAttribute("src", "/assets/projectile.png")
         this.texture = texture
-        this.hitboxRadius = 5
+        this.hitboxRadius = 10
     }
 
-    checkForCollision = (entities:ObjectRender[]):ObjectRender|undefined => {
+    checkForCollision = (entities: ObjectRender[]): ObjectRender | undefined => {
         let object = undefined
-        entities.forEach(e=>{
-            if(Math.sqrt(Math.pow(this.coordinates.x - e.coordinates.x,2)+ Math.pow(this.coordinates.y - e.coordinates.y,2))<this.hitboxRadius+e.hitboxRadius)
-            object = e
+        entities.forEach(e => {
+            if (Math.sqrt(Math.pow(this.coordinates.x - e.coordinates.x, 2) + Math.pow(this.coordinates.y - e.coordinates.y, 2)) < this.hitboxRadius + e.hitboxRadius)
+                object = e
         })
+        console.log(object)
         return object
     }
 
