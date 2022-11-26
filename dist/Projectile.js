@@ -25,8 +25,8 @@ var Projectile = /** @class */ (function (_super) {
     }
     Projectile.prototype.render = function (speed) {
         this.coordinates = {
-            x: this.coordinates.x + speed * 5 * -Math.cos(this.isometricAngles.x),
-            y: this.coordinates.y + speed * 5 * -Math.cos(this.isometricAngles.y)
+            x: this.coordinates.x + speed * 20 * -Math.cos(this.isometricAngles.x),
+            y: this.coordinates.y + speed * 20 * -Math.cos(this.isometricAngles.y)
         };
         this.ctx.drawImage(this.texture, this.coordinates.x, this.coordinates.y);
     };
