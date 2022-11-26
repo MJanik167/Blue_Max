@@ -10,27 +10,30 @@ interface coords {
   y: number
 }
 
-export default class ObjectRender {
+export default abstract class ObjectRender {
   ctx: CanvasRenderingContext2D
   texture: HTMLImageElement
   coordinates: coords
   isometricAngles: coords
-  constructor(ctx: CanvasRenderingContext2D, texture: string, positionX?: number, positionY?: number) {
+  constructor(ctx: CanvasRenderingContext2D, texture?: string, positionX?: number, positionY?: number) {
     this.isometricAngles = angles
     this.ctx = ctx
     this.texture = document.createElement("img")
-    this.texture.setAttribute("src", `../assets/${texture}.png`)
+    if (texture != undefined) { this.texture.setAttribute("src", `../assets/${texture}.png`) }
     this.coordinates = {
       x: positionX ?? 0,
       y: positionY ?? 0
     }
   }
 
-  render = (speed: number) => {
-    this.coordinates = {
-      x: this.coordinates.x + speed * Math.cos(this.isometricAngles.x),
-      y: this.coordinates.y + speed * Math.cos(this.isometricAngles.y)
-    }
-    this.ctx.drawImage(this.texture, this.coordinates.x, this.coordinates.y)
-  }
+  abstract render(speed: number): void
+  // => {
+  //   this.coordinates = {
+  //     x: this.coordinates.x + speed * Math.cos(this.isometricAngles.x),
+  //     y: this.coordinates.y + speed * Math.cos(this.isometricAngles.y)
+  //   }
+  //   this.ctx.drawImage(this.texture, this.coordinates.x, this.coordinates.y)
+  // }
+
+  abstract destroy(array: ObjectRender[]): void
 }

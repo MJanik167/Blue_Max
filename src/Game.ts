@@ -1,5 +1,6 @@
 import ObjectRender from "./ObjectRender.js"
 import Plane from "./Plane.js"
+import Projectile from "./Projectile.js"
 
 
 type GameEntities = ObjectRender
@@ -64,7 +65,7 @@ export default class Game {
         this.canvas = canvas
         this.ctx = ctx
         this.instances = {
-            entities: new Array<GameEntities>(1).fill(new Plane(this.ctx, "plane1", this.increaseSpeed)),
+            entities: new Array<GameEntities>(1).fill(new Plane(this.ctx, this.increaseSpeed, (e: Projectile): void => { this.instances.entities.push(e) })),
             objects: new Array<GameEntities>(0)
         }
         this.frame()
@@ -75,32 +76,40 @@ export default class Game {
         this.speed.now += 0.05
     }
 
-    createInstance = (object: GameObject, image: string, isEntity: boolean, positionX?: number, positionY?: number) => {
-        if (isEntity)
-            this.instances.entities.push(new object(this.ctx, image, positionX, positionY))
-        else
-            this.instances.objects.push(new object(this.ctx, image, positionX, positionY))
-    }
+    // createInstance = (object: GameObject, image: string, isEntity: boolean, positionX?: number, positionY?: number) => {
+    //     if (isEntity)
+    //         this.instances.entities.push(new object(this.ctx, image, positionX, positionY))
+    //     else
+    //         this.instances.objects.push(new object(this.ctx, image, positionX, positionY))
+    // }
 
     frame = async () => {
         // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
         // this.ctx.drawImage(this.background.src, this.background.x += Math.cos(angles.x) * this.speed.now, this.background.y += Math.cos(angles.y) * this.speed.now, 1980 * 3, 1080 * 3)
-        this.ctx.drawImage(this.background.src,
+        this.ctx.drawImage(
+            this.background.src,
             this.background.x -= Math.cos(angles.x) * this.speed.now, this.background.y -= Math.cos(angles.y) * this.speed.now, //pozycja wyciętego fragment na oryginalnym obrazku 
             this.canvas.width, this.canvas.height, //wielkość wyciętego fragmentu
             0, 0, // pozycja obrazka na canvasie
-            this.canvas.width, this.canvas.height)
+            this.canvas.width, this.canvas.height
+        )
         // console.log(this.background.y, this.background.src.height)
         if (this.background.y < 0) {
             this.background.y = this.background.src.height - this.canvas.height
             this.background.x = 0
         } // rozmiar obrazka na canvasie
         // if (this.speed.now > 0 && Date.now() % 2 == 0) this.createInstance(ObjectRender, "tree1", false, 100 + Math.floor(Math.random() * 900), -100)
-        // this.instances.objects.forEach(e => {
-        //     e.render(this.speed.now)
-        // })
-        // console.log(this.instances.objects.length)
-        this.instances.entities.forEach(e => e.render(this.speed.now))
+        this.instances.objects.forEach(e => {
+            e.render(this.speed.now)
+
+        })
+        this.instances.entities.forEach(e => {
+            e.render(this.speed.now)
+            if ((e.coordinates.x > this.canvas.width || e.coordinates.x < 0 - e.texture.width)
+                || (e.coordinates.y < 0 - e.texture.height || e.coordinates.y > this.canvas.height))
+                e.destroy(this.instances.entities)
+        })
+        console.log(this.instances.entities)
         requestAnimationFrame(this.frame)
     }
 }

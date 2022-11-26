@@ -14,6 +14,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import ObjectRender from "./ObjectRender.js";
+import Projectile from "./Projectile.js";
 var directions = {
     left: ["ArrowLeft", "a", "A"],
     right: ["ArrowRight", "d", "D"],
@@ -26,15 +27,15 @@ var angles = {
     up: Math.PI * 1.5,
     down: Math.PI * 0.5
 };
-var planeStates = {
+var spriteNames = {
     idle: ["plane1.png", "plane2.png"],
     left: ["left1.png", "left2.png"],
     right: ["right1.png", "right2.png"]
 };
 var Plane = /** @class */ (function (_super) {
     __extends(Plane, _super);
-    function Plane(ctx, texture, increaseSpeed) {
-        var _this = _super.call(this, ctx, texture) || this;
+    function Plane(ctx, increaseSpeed, addProjectile) {
+        var _this = _super.call(this, ctx) || this;
         _this.press = function (event) {
             for (var direction in directions) {
                 if (directions[direction].includes(event.key))
@@ -44,7 +45,7 @@ var Plane = /** @class */ (function (_super) {
                     else
                         _this.pressedKeys.push(direction);
             }
-            if (event.key === " ")
+            if (event.key === " " && _this.velocity >= _this.maxvelocity && !_this.fired)
                 _this.shoot();
         };
         _this.release = function (event) {
@@ -53,15 +54,23 @@ var Plane = /** @class */ (function (_super) {
                     if (_this.pressedKeys.includes(direction))
                         _this.pressedKeys.splice(_this.pressedKeys.indexOf(direction));
             }
+            if (event.key === " ") {
+                _this.fired = false;
+            }
         };
         _this.shoot = function () {
-            console.log("💩💩💩💩💩💩💩💩💩💩💩💩");
+            _this.addProjectile(new Projectile(_this.ctx, _this.coordinates.x + _this.texture.width * .5, _this.coordinates.y));
+            _this.fired = true;
         };
         _this.render = function () {
             if (_this.pressedKeys.length != 0) {
                 _this.increaseSpeed();
-                if (_this.velocity <= _this.maxvelocity)
+                if (_this.velocity <= _this.maxvelocity) {
                     _this.velocity += 0.05;
+                }
+                else {
+                    _this.velocity = _this.maxvelocity;
+                }
                 _this.pressedKeys.forEach(function (e) {
                     return _this.coordinates = {
                         x: _this.coordinates.x + _this.velocity * Math.cos(angles[e]),
@@ -70,43 +79,47 @@ var Plane = /** @class */ (function (_super) {
                 });
             }
             if (_this.velocity > 0) {
+                var position = "idle";
                 if (_this.pressedKeys.includes("left") && _this.pressedKeys.length === 1) {
-                    _this.texture = Date.now() % 3 == 0 ? _this.planeState.left[0] : _this.planeState.left[1];
+                    position = "left";
                 }
                 else if (_this.pressedKeys.includes("right") && _this.pressedKeys.length === 1) {
-                    _this.texture = Date.now() % 3 == 0 ? _this.planeState.right[0] : _this.planeState.right[1];
+                    position = "right";
                 }
-                else {
-                    _this.texture = Date.now() % 3 == 0 ? _this.planeState.idle[0] : _this.planeState.idle[1];
-                }
+                _this.texture = Date.now() % 3 == 0 ? _this.sprites[position][0] : _this.sprites[position][1];
             }
             _this.ctx.drawImage(_this.texture, _this.coordinates.x, _this.coordinates.y);
         };
         _this.pressedKeys = [];
+        _this.fired = false;
         _this.increaseSpeed = increaseSpeed;
+        _this.addProjectile = addProjectile;
         _this.velocity = 0;
         _this.maxvelocity = 5;
         _this.coordinates = {
             x: 300,
             y: 400
         };
-        _this.planeState = {
+        _this.sprites = {
             idle: [],
             left: [],
             right: []
         };
-        for (var state in planeStates) {
-            (_this.planeState[state]) = (planeStates[state]).map(function (el) {
+        for (var state in spriteNames) {
+            _this.sprites[state] = spriteNames[state].map(function (el) {
                 var img = document.createElement("img");
-                img.setAttribute("src", "/assets/".concat(el));
+                img.setAttribute("src", "/assets/planeSprites/".concat(el));
                 return img;
             });
         }
-        console.log(_this.planeState);
+        _this.texture = _this.sprites.idle[0];
+        console.log(_this.sprites);
         window.addEventListener("keydown", _this.press);
         window.addEventListener("keyup", _this.release);
         return _this;
     }
+    Plane.prototype.destroy = function () {
+    };
     return Plane;
 }(ObjectRender));
 export default Plane;

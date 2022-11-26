@@ -1,4 +1,5 @@
 import ObjectRender from "./ObjectRender.js";
+import Projectile from "./Projectile.js";
 
 type Directions = "left" | "right" | "up" | "down"
 
@@ -18,7 +19,7 @@ const angles: { [angles in Directions]: number } = {
 
 type states = "idle" | "left" | "right"
 
-const planeStates: { [state in states]: string[] } = {
+const spriteNames: { [state in states]: string[] } = {
   idle: ["plane1.png", "plane2.png"],
   left: ["left1.png", "left2.png"],
   right: ["right1.png", "right2.png"]
@@ -29,13 +30,17 @@ export default class Plane extends ObjectRender {
   pressedKeys: Array<Directions>
   velocity: number
   maxvelocity: number
-  planeState: { [state in states]: HTMLImageElement[] }
+  sprites: { [state in states]: HTMLImageElement[] }
+  fired: boolean
   increaseSpeed: () => void
-  constructor(ctx: CanvasRenderingContext2D, texture: string, increaseSpeed: () => void) {
-    super(ctx, texture)
+  addProjectile: (e: Projectile) => void
+  constructor(ctx: CanvasRenderingContext2D, increaseSpeed: () => void, addProjectile: (e: Projectile) => void) {
+    super(ctx)
 
     this.pressedKeys = []
+    this.fired = false
     this.increaseSpeed = increaseSpeed
+    this.addProjectile = addProjectile
     this.velocity = 0
     this.maxvelocity = 5
 
@@ -44,20 +49,22 @@ export default class Plane extends ObjectRender {
       y: 400
     }
 
-    this.planeState = {
+    this.sprites = {
       idle: [],
       left: [],
       right: []
     }
 
-    for (let state in planeStates) {
-      (this.planeState[state as states]) = (planeStates[state as states]).map((el): HTMLImageElement => {
-        let img: HTMLImageElement = document.createElement("img")
+    for (let state in spriteNames) {
+      this.sprites[state as states] = spriteNames[state as states].map((el): HTMLImageElement => {
+        let img = document.createElement("img")
         img.setAttribute("src", `/assets/planeSprites/${el}`)
         return img
       })
     }
-    console.log(this.planeState)
+
+    this.texture = this.sprites.idle[0]
+    console.log(this.sprites)
 
     window.addEventListener("keydown", this.press)
     window.addEventListener("keyup", this.release)
@@ -69,7 +76,7 @@ export default class Plane extends ObjectRender {
         if (this.pressedKeys.includes(direction as Directions)) { return }
         else this.pressedKeys.push(direction as Directions)
     }
-    if (event.key === " ")
+    if (event.key === " " && this.velocity >= this.maxvelocity && !this.fired)
       this.shoot()
   }
 
@@ -79,17 +86,19 @@ export default class Plane extends ObjectRender {
         if (this.pressedKeys.includes(direction as Directions))
           this.pressedKeys.splice(this.pressedKeys.indexOf(direction as Directions))
     }
+    if (event.key === " ") { this.fired = false }
   }
 
   shoot = () => {
-    console.log("💩💩💩💩💩💩💩💩💩💩💩💩")
-
+    this.addProjectile(new Projectile(this.ctx, this.coordinates.x + this.texture.width * .5, this.coordinates.y))
+    this.fired = true
   }
 
   render = () => {
     if (this.pressedKeys.length != 0) {
       this.increaseSpeed()
-      if (this.velocity <= this.maxvelocity) this.velocity += 0.05
+      if (this.velocity <= this.maxvelocity) { this.velocity += 0.05 }
+      else { this.velocity = this.maxvelocity }
       this.pressedKeys.forEach(e =>
         this.coordinates = {
           x: this.coordinates.x + this.velocity * Math.cos(angles[e as Directions]),
@@ -98,15 +107,15 @@ export default class Plane extends ObjectRender {
       )
     }
     if (this.velocity > 0) {
-
-      if (this.pressedKeys.includes("left") && this.pressedKeys.length === 1) {
-        this.texture = Date.now() % 3 == 0 ? this.planeState.left[0] : this.planeState.left[1]
-      }
-      else if (this.pressedKeys.includes("right") && this.pressedKeys.length === 1) {
-        this.texture = Date.now() % 3 == 0 ? this.planeState.right[0] : this.planeState.right[1]
-      }
-      else { this.texture = Date.now() % 3 == 0 ? this.planeState.idle[0] : this.planeState.idle[1] }
+      let position = "idle"
+      if (this.pressedKeys.includes("left") && this.pressedKeys.length === 1) { position = "left" }
+      else if (this.pressedKeys.includes("right") && this.pressedKeys.length === 1) { position = "right" }
+      this.texture = Date.now() % 3 == 0 ? this.sprites[position as states][0] : this.sprites[position as states][1]
     }
     this.ctx.drawImage(this.texture, this.coordinates.x, this.coordinates.y)
+  }
+
+  destroy(): void {
+
   }
 }
