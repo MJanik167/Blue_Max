@@ -28,15 +28,23 @@ var angles = {
     down: Math.PI * 0.5
 };
 var spriteNames = {
-    idle: ["plane1.png", "plane2.png"],
-    left: ["left1.png", "left2.png"],
-    right: ["right1.png", "right2.png"]
+    idle: ["plane1b.png", "plane2b.png"],
+    left: ["left1b.png", "left2b.png"],
+    right: ["right1b.png", "right2b.png"]
 };
 var Plane = /** @class */ (function (_super) {
     __extends(Plane, _super);
     function Plane(ctx, increaseSpeed, addProjectile) {
         var _this = _super.call(this, ctx) || this;
         _this.press = function (event) {
+            if (_this.velocity < _this.maxvelocity && directions["up"].includes(event.key)) {
+                _this.velocity += 0.05;
+                _this.increaseSpeed(_this.velocity);
+                return;
+            }
+            else if (_this.velocity >= _this.maxvelocity) {
+                _this.velocity = _this.maxvelocity;
+            }
             for (var direction in directions) {
                 if (directions[direction].includes(event.key))
                     if (_this.pressedKeys.includes(direction)) {
@@ -59,21 +67,32 @@ var Plane = /** @class */ (function (_super) {
             }
         };
         _this.shoot = function () {
-            _this.addProjectile(new Projectile(_this.ctx, _this.coordinates.x + _this.texture.width * .5, _this.coordinates.y));
+            _this.addProjectile(new Projectile(_this.ctx, _this, _this.coordinates.x + _this.texture.width * .5, _this.coordinates.y));
             _this.fired = true;
         };
         _this.render = function () {
             if (_this.pressedKeys.length != 0) {
-                _this.increaseSpeed();
-                if (_this.velocity <= _this.maxvelocity) {
-                    _this.velocity += 0.05;
-                }
-                else {
-                    _this.velocity = _this.maxvelocity;
-                }
                 _this.pressedKeys.forEach(function (e) {
-                    return _this.coordinates = {
-                        x: _this.coordinates.x + _this.velocity * Math.cos(angles[e]),
+                    var addX = Math.cos(angles[e]);
+                    var addY = 0;
+                    if (_this.coordinates.x < 0) {
+                        _this.coordinates.x = 0;
+                        addX = 0;
+                    }
+                    else if (_this.coordinates.x > 640 - _this.texture.width) {
+                        _this.coordinates.x = 640 - _this.texture.width;
+                        addX = 0;
+                    }
+                    if (_this.coordinates.y > 480 - _this.texture.height) {
+                        _this.coordinates.y = 480 - _this.texture.height;
+                        addY = 0;
+                    }
+                    else if (_this.coordinates.y < 0) {
+                        _this.coordinates.y = 0;
+                        addY = 0;
+                    }
+                    _this.coordinates = {
+                        x: _this.coordinates.x + _this.velocity * addX,
                         y: _this.coordinates.y + _this.velocity * Math.sin(angles[e])
                     };
                 });
@@ -97,8 +116,8 @@ var Plane = /** @class */ (function (_super) {
         _this.velocity = 0;
         _this.maxvelocity = 5;
         _this.coordinates = {
-            x: 300,
-            y: 400
+            x: 230,
+            y: 420
         };
         _this.sprites = {
             idle: [],

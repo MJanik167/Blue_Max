@@ -18,12 +18,14 @@ var Enemy = /** @class */ (function (_super) {
     __extends(Enemy, _super);
     function Enemy(ctx, positionX, positionY) {
         var _this = _super.call(this, ctx, undefined, positionX, positionY) || this;
-        _this.hitboxRadius = 20;
+        _this.hitboxRadius = 30;
         return _this;
     }
     Enemy.prototype.render = function (speed) {
         this.ctx.beginPath();
-        this.ctx.arc(this.coordinates.x + this.hitboxRadius * .5, this.coordinates.y + this.hitboxRadius * .5, 20, 0, Math.PI * 2);
+        this.ctx.font = "15px Arial";
+        this.ctx.fillText("kurwiszon", this.coordinates.x - this.hitboxRadius * .5, this.coordinates.y + this.hitboxRadius * .5);
+        this.ctx.arc(this.coordinates.x + this.hitboxRadius * .5, this.coordinates.y + this.hitboxRadius * .5, this.hitboxRadius, 0, Math.PI * 2);
         this.ctx.stroke();
     };
     Enemy.prototype.destroy = function (array) {

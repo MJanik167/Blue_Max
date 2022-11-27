@@ -3,12 +3,14 @@ import ObjectRender from "./ObjectRender.js";
 export default class Enemy extends ObjectRender {
     constructor(ctx: CanvasRenderingContext2D, positionX?: number, positionY?: number) {
         super(ctx, undefined, positionX, positionY);
-        this.hitboxRadius = 20
+        this.hitboxRadius = 30
     }
 
     render(speed: number): void {
         this.ctx.beginPath()
-        this.ctx.arc(this.coordinates.x + this.hitboxRadius * .5, this.coordinates.y + this.hitboxRadius * .5, 20, 0, Math.PI * 2)
+        this.ctx.font = "15px Arial";
+        this.ctx.fillText("kurwiszon", this.coordinates.x - this.hitboxRadius * .5, this.coordinates.y + this.hitboxRadius * .5);
+        this.ctx.arc(this.coordinates.x + this.hitboxRadius * .5, this.coordinates.y + this.hitboxRadius * .5, this.hitboxRadius, 0, Math.PI * 2)
         this.ctx.stroke()
     }
 

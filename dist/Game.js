@@ -43,11 +43,12 @@ var angles = {
 var Game = /** @class */ (function () {
     function Game(canvas, ctx) {
         var _this = this;
-        this.increaseSpeed = function () {
+        this.increaseSpeed = function (speed) {
             if (_this.speed.now > _this.speed.max) {
                 return;
             }
             _this.speed.now += 0.05;
+            document.getElementById("speed").innerText = String(Math.round(speed * 100));
         };
         // createInstance = (object: GameObject, image: string, isEntity: boolean, positionX?: number, positionY?: number) => {
         //     if (isEntity)
@@ -119,7 +120,7 @@ var Game = /** @class */ (function () {
             altitude: 0
         };
         var img = document.createElement("img");
-        img.setAttribute("src", "../assets/tło.png");
+        img.setAttribute("src", "../assets/testb.png");
         this.background = {
             src: img,
             x: 0,
@@ -132,9 +133,9 @@ var Game = /** @class */ (function () {
             entities: new Array(1).fill(new Plane(this.ctx, this.increaseSpeed, function (e) { _this.instances.projectiles.push(e); })),
             projectiles: new Array(0)
         };
-        for (var i = 0; i < 10; i++) {
-            this.instances.entities.push(new Enemy(ctx, 100 + 50 * i, 100));
-            this.instances.entities.push(new Enemy(ctx, 100 + 50 * i, 120));
+        for (var i = 0; i < 5; i++) {
+            this.instances.entities.push(new Enemy(ctx, 100 + 100 * i, 100));
+            this.instances.entities.push(new Enemy(ctx, 100 + 100 * i, 250));
         }
         this.instances.entities.push(new Enemy(ctx, 500, 100));
         this.frame();
