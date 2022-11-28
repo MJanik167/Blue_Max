@@ -1,5 +1,6 @@
 import Enemy from "./Enemy.js"
 import EnemyPlaneDown from "./EnemyPlaneDown.js"
+import EnemyPlaneUp from "./EnemyPlaneUp.js"
 import ObjectRender from "./ObjectRender.js"
 import Plane from "./Plane.js"
 import Projectile from "./Projectile.js"
@@ -79,6 +80,7 @@ export default class Game {
             this.instances.entities.push(new Enemy(ctx, 100 + 60 * i, 350))
         }
         this.frame()
+        this.instances.entities.push(new EnemyPlaneUp(this.ctx, 50, (e: Projectile): void => { this.instances.projectiles.push(e) }, Math.floor(Math.random() * this.canvas.width)))
     }
 
     increaseSpeed = (speed: number) => {
@@ -112,7 +114,7 @@ export default class Game {
 
 
         if (Date.now() % 154 === 0) {
-            this.instances.entities.push(new EnemyPlaneDown(this.ctx, 50, this.canvas.width * .5))
+            this.instances.entities.push(Math.floor(Math.random() * 2) === 1 ? new EnemyPlaneDown(this.ctx, 50, (e: Projectile): void => { this.instances.projectiles.push(e) }, Math.floor(Math.random() * this.canvas.width)) : new EnemyPlaneUp(this.ctx, 50, (e: Projectile): void => { this.instances.projectiles.push(e) }, Math.floor(Math.random() * this.canvas.width)))
         }
         // if (this.speed.now > 0 && Date.now() % 2 == 0) this.createInstance(ObjectRender, "tree1", false, 100 + Math.floor(Math.random() * 900), -100)
         for (let instance in this.instances) {

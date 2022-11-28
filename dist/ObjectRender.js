@@ -17,6 +17,18 @@ var ObjectRender = /** @class */ (function () {
             y: positionY !== null && positionY !== void 0 ? positionY : 0
         };
     }
+    // => {
+    //   this.coordinates = {
+    //     x: this.coordinates.x + speed * Math.cos(this.isometricAngles.x),
+    //     y: this.coordinates.y + speed * Math.cos(this.isometricAngles.y)
+    //   }
+    //   this.ctx.drawImage(this.texture, this.coordinates.x, this.coordinates.y)
+    // }
+    ObjectRender.prototype.destroy = function (array, targets) {
+        var _this = this;
+        var index = array.findIndex(function (e) { return e === _this; });
+        array.splice(index, 1);
+    };
     return ObjectRender;
 }());
 export default ObjectRender;

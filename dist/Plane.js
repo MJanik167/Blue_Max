@@ -23,8 +23,8 @@ var directions = {
     down: ["ArrowDown", "s", "S"]
 };
 var angles = {
-    left: Math.PI * 1.05,
-    right: Math.PI * 0.05,
+    left: Math.PI,
+    right: 0,
     up: Math.PI * 1.5,
     down: Math.PI * 0.5
 };
@@ -130,7 +130,7 @@ var Plane = /** @class */ (function (_super) {
                 }
                 _this.texture = Date.now() % 3 == 0 ? _this.sprites[position][0] : _this.sprites[position][1];
             }
-            _this.ctx.drawImage(_this.texture, _this.coordinates.x, _this.coordinates.y);
+            _this.ctx.drawImage(_this.texture, _this.coordinates.x - _this.texture.width * .5, _this.coordinates.y - _this.texture.height * .5);
         };
         _this.pressedKeys = [];
         _this.increaseSpeed = increaseSpeed;
@@ -147,7 +147,7 @@ var Plane = /** @class */ (function (_super) {
             fuel: 300
         };
         _this.coordinates = {
-            x: 230,
+            x: 260,
             y: 420
         };
         _this.sprites = {

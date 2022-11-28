@@ -16,17 +16,20 @@ var __extends = (this && this.__extends) || (function () {
 import ObjectRender from "./ObjectRender.js";
 var Texture = /** @class */ (function (_super) {
     __extends(Texture, _super);
-    function Texture(ctx, texture, positionX, positionY) {
-        return _super.call(this, ctx, texture, positionX, positionY) || this;
+    function Texture(ctx, texture, positionX, positionY, radius) {
+        var _this = _super.call(this, ctx, texture, positionX, positionY) || this;
+        _this.radius = radius;
+        return _this;
     }
     Texture.prototype.render = function (speed) {
         this.coordinates = {
             x: this.coordinates.x + speed * Math.cos(this.isometricAngles.x),
             y: this.coordinates.y + speed * Math.cos(this.isometricAngles.y)
         };
-        this.ctx.drawImage(this.texture, this.coordinates.x, this.coordinates.y);
-    };
-    Texture.prototype.destroy = function (array, targets) {
+        this.ctx.drawImage(this.texture, this.coordinates.x - this.texture.width * .5, this.coordinates.y - this.texture.height * .5);
+        this.ctx.beginPath();
+        this.ctx.arc(this.coordinates.x, this.coordinates.y, this.radius, 0, Math.PI * 2);
+        this.ctx.stroke();
     };
     return Texture;
 }(ObjectRender));

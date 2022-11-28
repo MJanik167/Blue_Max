@@ -37,14 +37,13 @@ export default class Bomb extends Projectile {
         array.splice(index, 1)
         console.log(targets)
         this.explode(targets!)
-        this.createObject(new Texture(this.ctx, "dziura", this.coordinates.x, this.coordinates.y))
+        this.createObject(new Texture(this.ctx, "dziura", this.coordinates.x, this.coordinates.y, (this.hitboxRadius + 30) * this.blastingRadiusMultiplier))
     }
 
     explode = (entities: ObjectRender[]): void => {
         console.log("bumba")
         let inBlast: ObjectRender[] = []
         entities.forEach(e => {
-            console.log(Math.sqrt((this.coordinates.x - e.coordinates.x) ** 2 + (this.coordinates.y - e.coordinates.y) ** 2) < (this.hitboxRadius + e.hitboxRadius) * this.blastingRadiusMultiplier)
             if (Math.sqrt((this.coordinates.x - e.coordinates.x) ** 2 + (this.coordinates.y - e.coordinates.y) ** 2) < (this.hitboxRadius + e.hitboxRadius) * this.blastingRadiusMultiplier)
                 inBlast.push(e)
         })
@@ -60,6 +59,11 @@ export default class Bomb extends Projectile {
             y: this.coordinates.y + this.fallingSpeed
         }
         this.altitude -= 1
-        this.ctx.drawImage(this.texture, this.coordinates.x, this.coordinates.y)
+        this.ctx.beginPath()
+        this.ctx.arc(this.coordinates.x, this.coordinates.y, 1, 0, Math.PI * 2)
+        this.ctx.arc(this.coordinates.x, this.coordinates.y, this.hitboxRadius, 0, Math.PI * 2)
+        this.ctx.stroke()
+        this.ctx.drawImage(this.texture, this.coordinates.x - this.texture.width * .5, this.coordinates.y - this.texture.height * .5)
+
     }
 }

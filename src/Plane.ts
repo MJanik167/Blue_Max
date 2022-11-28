@@ -14,8 +14,8 @@ const directions: { [directions in Directions]: string[] } = {
 }
 
 const angles: { [angles in Directions]: number } = {
-  left: Math.PI * 1.05,
-  right: Math.PI * 0.05,
+  left: Math.PI,
+  right: 0,
   up: Math.PI * 1.5,
   down: Math.PI * 0.5
 }
@@ -64,7 +64,7 @@ export default class Plane extends ObjectRender {
     }
 
     this.coordinates = {
-      x: 230,
+      x: 260,
       y: 420
     }
 
@@ -166,7 +166,7 @@ export default class Plane extends ObjectRender {
       else if (this.pressedKeys.includes("right") && this.pressedKeys.length === 1) { position = "right" }
       this.texture = Date.now() % 3 == 0 ? this.sprites[position as states][0] : this.sprites[position as states][1]
     }
-    this.ctx.drawImage(this.texture, this.coordinates.x, this.coordinates.y)
+    this.ctx.drawImage(this.texture, this.coordinates.x - this.texture.width * .5, this.coordinates.y - this.texture.height * .5)
   }
 
   destroy(): void {

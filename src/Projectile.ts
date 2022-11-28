@@ -4,11 +4,15 @@ import ObjectRender from "./ObjectRender.js";
 export default class Projectile extends ObjectRender {
     origin: ObjectRender
     speedMultiplier: number
-    constructor(ctx: CanvasRenderingContext2D, origin: ObjectRender, altitude: number, positionX: number, positionY: number) {
+    constructor(ctx: CanvasRenderingContext2D, origin: ObjectRender, altitude: number, positionX: number, positionY: number, angleX?: number, angleY?: number) {
         super(ctx, undefined, positionX, positionY);
         let texture = document.createElement("img")
+        this.isometricAngles = {
+            x: angleX ?? this.isometricAngles.x,
+            y: angleY ?? this.isometricAngles.y
+        }
         texture.setAttribute("src", "/assets/projectile.png")
-        this.speedMultiplier = 20
+        this.speedMultiplier = 10
         this.altitude = altitude
         this.origin = origin
         this.texture = texture
@@ -32,11 +36,11 @@ export default class Projectile extends ObjectRender {
             x: this.coordinates.x + speed * this.speedMultiplier * -Math.cos(this.isometricAngles.x),
             y: this.coordinates.y + speed * this.speedMultiplier * -Math.cos(this.isometricAngles.y)
         }
-        this.ctx.drawImage(this.texture, this.coordinates.x, this.coordinates.y)
+        this.ctx.drawImage(this.texture, this.coordinates.x - this.texture.width * .5, this.coordinates.y - this.texture.height * .5)
+        this.ctx.beginPath()
+        this.ctx.arc(this.coordinates.x, this.coordinates.y, 5, 0, Math.PI * 2)
+        this.ctx.arc(this.coordinates.x, this.coordinates.y, this.hitboxRadius, 0, Math.PI * 2)
+        this.ctx.stroke()
     }
 
-    destroy(myArray: ObjectRender[]): void {
-        let index = myArray.findIndex(e => e === this)
-        myArray.splice(index, 1)
-    }
 }

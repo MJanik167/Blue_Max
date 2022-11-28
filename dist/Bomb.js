@@ -38,7 +38,6 @@ var Bomb = /** @class */ (function (_super) {
             console.log("bumba");
             var inBlast = [];
             entities.forEach(function (e) {
-                console.log(Math.sqrt(Math.pow((_this.coordinates.x - e.coordinates.x), 2) + Math.pow((_this.coordinates.y - e.coordinates.y), 2)) < (_this.hitboxRadius + e.hitboxRadius) * _this.blastingRadiusMultiplier);
                 if (Math.sqrt(Math.pow((_this.coordinates.x - e.coordinates.x), 2) + Math.pow((_this.coordinates.y - e.coordinates.y), 2)) < (_this.hitboxRadius + e.hitboxRadius) * _this.blastingRadiusMultiplier)
                     inBlast.push(e);
             });
@@ -53,7 +52,11 @@ var Bomb = /** @class */ (function (_super) {
                 y: _this.coordinates.y + _this.fallingSpeed
             };
             _this.altitude -= 1;
-            _this.ctx.drawImage(_this.texture, _this.coordinates.x, _this.coordinates.y);
+            _this.ctx.beginPath();
+            _this.ctx.arc(_this.coordinates.x, _this.coordinates.y, 1, 0, Math.PI * 2);
+            _this.ctx.arc(_this.coordinates.x, _this.coordinates.y, _this.hitboxRadius, 0, Math.PI * 2);
+            _this.ctx.stroke();
+            _this.ctx.drawImage(_this.texture, _this.coordinates.x - _this.texture.width * .5, _this.coordinates.y - _this.texture.height * .5);
         };
         _this.createObject = createObject;
         _this.blastingRadiusMultiplier = 1.8;
@@ -66,7 +69,7 @@ var Bomb = /** @class */ (function (_super) {
         array.splice(index, 1);
         console.log(targets);
         this.explode(targets);
-        this.createObject(new Texture(this.ctx, "dziura", this.coordinates.x, this.coordinates.y));
+        this.createObject(new Texture(this.ctx, "dziura", this.coordinates.x, this.coordinates.y, (this.hitboxRadius + 30) * this.blastingRadiusMultiplier));
     };
     return Bomb;
 }(Projectile));

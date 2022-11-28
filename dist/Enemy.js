@@ -18,21 +18,22 @@ var Enemy = /** @class */ (function (_super) {
     __extends(Enemy, _super);
     function Enemy(ctx, positionX, positionY) {
         var _this = _super.call(this, ctx, undefined, positionX, positionY) || this;
+        _this.speedMultiplier = 1.3;
         _this.hitboxRadius = 30;
+        _this.sprites = {
+            idle: [],
+            left: [],
+            right: []
+        };
         return _this;
     }
     Enemy.prototype.render = function (speed) {
         this.ctx.beginPath();
         this.ctx.font = "12px Arial orange";
-        this.ctx.fillText("bo\u015Bniackie", this.coordinates.x - this.hitboxRadius * .5 + 5, this.coordinates.y + this.hitboxRadius * .5);
-        this.ctx.fillText("dziecko", this.coordinates.x - this.hitboxRadius * .5 + 5, this.coordinates.y + this.hitboxRadius * .5 + 15);
-        this.ctx.arc(this.coordinates.x + this.hitboxRadius * .5, this.coordinates.y + this.hitboxRadius * .5, this.hitboxRadius, 0, Math.PI * 2);
+        this.ctx.fillText("bo\u015Bniackie", this.coordinates.x - this.hitboxRadius * .7, this.coordinates.y);
+        this.ctx.fillText("dziecko", this.coordinates.x - this.hitboxRadius * .7, this.coordinates.y + 15);
+        this.ctx.arc(this.coordinates.x, this.coordinates.y, this.hitboxRadius, 0, Math.PI * 2);
         this.ctx.stroke();
-    };
-    Enemy.prototype.destroy = function (array) {
-        var _this = this;
-        var index = array.findIndex(function (e) { return e === _this; });
-        array.splice(index, 1);
     };
     return Enemy;
 }(ObjectRender));

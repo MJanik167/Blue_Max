@@ -39,5 +39,8 @@ export default abstract class ObjectRender {
   //   this.ctx.drawImage(this.texture, this.coordinates.x, this.coordinates.y)
   // }
 
-  abstract destroy(array: ObjectRender[], targets?: ObjectRender[]): void
+  destroy(array: ObjectRender[], targets?: ObjectRender[]): void {
+    let index = array.findIndex(e => e === this)
+    array.splice(index, 1)
+  }
 }

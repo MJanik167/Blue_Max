@@ -13,45 +13,50 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import ObjectRender from "./ObjectRender.js";
-var Projectile = /** @class */ (function (_super) {
-    __extends(Projectile, _super);
-    function Projectile(ctx, origin, altitude, positionX, positionY, angleX, angleY) {
-        var _this = _super.call(this, ctx, undefined, positionX, positionY) || this;
-        _this.checkForCollision = function (entities) {
-            var object = undefined;
-            entities.forEach(function (e) {
-                if (Math.sqrt(Math.pow(_this.coordinates.x - e.coordinates.x, 2) + Math.pow(_this.coordinates.y - e.coordinates.y, 2)) < _this.hitboxRadius + e.hitboxRadius
-                    && e !== _this.origin
-                    && (_this.altitude <= e.altitude + 15 && _this.altitude >= e.altitude - 15))
-                    object = e;
-            });
-            return object;
-        };
-        var texture = document.createElement("img");
-        _this.isometricAngles = {
-            x: angleX !== null && angleX !== void 0 ? angleX : _this.isometricAngles.x,
-            y: angleY !== null && angleY !== void 0 ? angleY : _this.isometricAngles.y
-        };
-        texture.setAttribute("src", "/assets/projectile.png");
-        _this.speedMultiplier = 10;
+import Enemy from "./Enemy.js";
+import Projectile from "./Projectile.js";
+var spriteNames = {
+    idle: ["idle1.png", "idle2.png"],
+    left: ["left1.png", "left2.png"],
+    right: ["right1.png", "right2.png"]
+};
+var EnemyPlaneUp = /** @class */ (function (_super) {
+    __extends(EnemyPlaneUp, _super);
+    function EnemyPlaneUp(ctx, altitude, createProjectile, positionX) {
+        var _this = _super.call(this, ctx, positionX, 480) || this;
         _this.altitude = altitude;
-        _this.origin = origin;
-        _this.texture = texture;
-        _this.hitboxRadius = 10;
+        _this.shoot = createProjectile;
+        _this.sprites = {
+            idle: [],
+            left: [],
+            right: []
+        };
+        for (var state in spriteNames) {
+            _this.sprites[state] = spriteNames[state].map(function (el) {
+                var img = document.createElement("img");
+                img.setAttribute("src", "/assets/EnemyPlaneUpSprites/".concat(el));
+                return img;
+            });
+        }
+        _this.texture = _this.sprites["idle"][0];
+        _this.hitboxRadius = 16;
         return _this;
     }
-    Projectile.prototype.render = function (speed) {
+    EnemyPlaneUp.prototype.render = function (speed) {
+        if (Date.now() % 35 === 0) {
+            this.shoot(new Projectile(this.ctx, this, this.altitude, this.coordinates.x, this.coordinates.y));
+        }
         this.coordinates = {
             x: this.coordinates.x + speed * this.speedMultiplier * -Math.cos(this.isometricAngles.x),
             y: this.coordinates.y + speed * this.speedMultiplier * -Math.cos(this.isometricAngles.y)
         };
+        this.texture = Date.now() % 3 == 0 ? this.sprites["idle"][0] : this.sprites["idle"][1];
         this.ctx.drawImage(this.texture, this.coordinates.x - this.texture.width * .5, this.coordinates.y - this.texture.height * .5);
         this.ctx.beginPath();
         this.ctx.arc(this.coordinates.x, this.coordinates.y, 5, 0, Math.PI * 2);
         this.ctx.arc(this.coordinates.x, this.coordinates.y, this.hitboxRadius, 0, Math.PI * 2);
         this.ctx.stroke();
     };
-    return Projectile;
-}(ObjectRender));
-export default Projectile;
+    return EnemyPlaneUp;
+}(Enemy));
+export default EnemyPlaneUp;

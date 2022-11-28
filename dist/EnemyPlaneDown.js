@@ -14,37 +14,48 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import Enemy from "./Enemy.js";
+import Projectile from "./Projectile.js";
+var spriteNames = {
+    idle: ["idle1.png", "idle2.png"],
+    left: ["left1.png", "left2.png"],
+    right: ["right1.png", "right2.png"]
+};
 var EnemyPlaneDown = /** @class */ (function (_super) {
     __extends(EnemyPlaneDown, _super);
-    function EnemyPlaneDown(ctx, altitude, positionX) {
+    function EnemyPlaneDown(ctx, altitude, createProjectile, positionX) {
         var _this = _super.call(this, ctx, positionX, 0) || this;
         _this.altitude = altitude;
-        _this.speedMultiplier = 1.6;
-        var img = document.createElement("img");
-        img.setAttribute("src", "/assets/EnemyPlaneDownSprites/idle1.png");
-        _this.texture = img;
-        var shorterSide = function () {
-            if (_this.texture.width < _this.texture.height) {
-                return _this.texture.width;
-            }
-            return _this.texture.height;
+        _this.shoot = createProjectile;
+        _this.sprites = {
+            idle: [],
+            left: [],
+            right: []
         };
-        _this.hitboxRadius = shorterSide();
-        console.log(_this.hitboxRadius, _this.texture.width, _this.texture.height);
-        console.log(_this.texture.width, _this.texture.height, _this.hitboxRadius);
+        for (var state in spriteNames) {
+            _this.sprites[state] = spriteNames[state].map(function (el) {
+                var img = document.createElement("img");
+                img.setAttribute("src", "/assets/EnemyPlaneDownSprites/".concat(el));
+                return img;
+            });
+        }
+        _this.texture = _this.sprites["idle"][0];
+        _this.hitboxRadius = 16;
         return _this;
     }
     EnemyPlaneDown.prototype.render = function (speed) {
+        if (Date.now() % 75 === 0) {
+            this.shoot(new Projectile(this.ctx, this, this.altitude, this.coordinates.x, this.coordinates.y, this.isometricAngles.x + Math.PI, this.isometricAngles.y + Math.PI));
+        }
         this.coordinates = {
             x: this.coordinates.x + speed * this.speedMultiplier * Math.cos(this.isometricAngles.x),
             y: this.coordinates.y + speed * this.speedMultiplier * Math.cos(this.isometricAngles.y)
         };
-        this.ctx.drawImage(this.texture, this.coordinates.x, this.coordinates.y);
-    };
-    EnemyPlaneDown.prototype.destroy = function (array) {
-        var _this = this;
-        var index = array.findIndex(function (e) { return e === _this; });
-        array.splice(index, 1);
+        this.texture = Date.now() % 3 == 0 ? this.sprites["idle"][0] : this.sprites["idle"][1];
+        this.ctx.drawImage(this.texture, this.coordinates.x - this.texture.width * .5, this.coordinates.y - this.texture.height * .5);
+        this.ctx.beginPath();
+        this.ctx.arc(this.coordinates.x, this.coordinates.y, 5, 0, Math.PI * 2);
+        this.ctx.arc(this.coordinates.x, this.coordinates.y, this.hitboxRadius, 0, Math.PI * 2);
+        this.ctx.stroke();
     };
     return EnemyPlaneDown;
 }(Enemy));

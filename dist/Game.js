@@ -36,6 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 import Enemy from "./Enemy.js";
 import EnemyPlaneDown from "./EnemyPlaneDown.js";
+import EnemyPlaneUp from "./EnemyPlaneUp.js";
 import Plane from "./Plane.js";
 var angles = {
     x: Math.PI * .7,
@@ -73,7 +74,7 @@ var Game = /** @class */ (function () {
                     this.background.x = 0;
                 } // rozmiar obrazka na canvasie
                 if (Date.now() % 154 === 0) {
-                    this.instances.entities.push(new EnemyPlaneDown(this.ctx, 50, this.canvas.width * .5));
+                    this.instances.entities.push(Math.floor(Math.random() * 2) === 1 ? new EnemyPlaneDown(this.ctx, 50, function (e) { _this.instances.projectiles.push(e); }, Math.floor(Math.random() * this.canvas.width)) : new EnemyPlaneUp(this.ctx, 50, function (e) { _this.instances.projectiles.push(e); }, Math.floor(Math.random() * this.canvas.width)));
                 }
                 _loop_1 = function (instance) {
                     this_1.instances[instance].forEach(function (e) {
@@ -143,6 +144,7 @@ var Game = /** @class */ (function () {
             this.instances.entities.push(new Enemy(ctx, 100 + 60 * i, 350));
         }
         this.frame();
+        this.instances.entities.push(new EnemyPlaneUp(this.ctx, 50, function (e) { _this.instances.projectiles.push(e); }, Math.floor(Math.random() * this.canvas.width)));
     }
     return Game;
 }());
