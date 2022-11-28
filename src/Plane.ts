@@ -32,6 +32,7 @@ interface planeState {
     max: number
   },
   fired: boolean,
+  lastBomb: number,
   bombs: number,
   fuel: number
 }
@@ -58,6 +59,7 @@ export default class Plane extends ObjectRender {
       },
       fired: false,
       bombs: 30,
+      lastBomb: 0,
       fuel: 300
     }
 
@@ -82,6 +84,8 @@ export default class Plane extends ObjectRender {
 
     this.texture = this.sprites.idle[0]
     console.log(this.sprites)
+    this.displayBombs()
+    this.displayFuel()
 
     window.addEventListener("keydown", this.press)
     window.addEventListener("keyup", this.release)
@@ -105,8 +109,11 @@ export default class Plane extends ObjectRender {
       this.addProjectile(new Projectile(this.ctx, this, this.altitude, this.coordinates.x + this.texture.width * .5, this.coordinates.y))
       this.planeState.fired = true
     }
-    else if ((event.key === "x" || event.key === "X") && this.planeState.velocity.now >= this.planeState.velocity.max && !this.planeState.fired) {
+    else if ((event.key === "x" || event.key === "X") && Date.now() - this.planeState.lastBomb > 2000 && this.planeState.velocity.now >= this.planeState.velocity.max && this.planeState.bombs > 0) {
       this.addProjectile(new Bomb(this.ctx, this, this.altitude, this.createObject, this.coordinates.x, this.coordinates.y + this.texture.height * .5))
+      this.planeState.lastBomb = Date.now()
+      this.planeState.bombs--
+      this.displayBombs()
     }
   }
 
@@ -119,6 +126,21 @@ export default class Plane extends ObjectRender {
     if (event.key === " ") {
       this.planeState.fired = false
     }
+  }
+
+  displayBombs = () => {
+    document.getElementById("bombs")!.innerText =
+      this.planeState.bombs >= 10 ?
+        String(this.planeState.bombs)
+        : "0" + String(this.planeState.bombs)
+  }
+
+  displayFuel = () => {
+    let text: string = String(Math.round(this.planeState.fuel))
+    if (this.planeState.fuel < 100) { text = "0" + String(Math.round(this.planeState.fuel)) }
+    else if (this.planeState.fuel < 10) { text = "00" + String(Math.round(this.planeState.fuel)) }
+    document.getElementById("fuel")!.innerText = text
+
   }
 
   render = () => {
@@ -136,8 +158,9 @@ export default class Plane extends ObjectRender {
         }
       })
     }
-    //console.log(this.altitude)
     if (this.planeState.velocity.now > 0) {
+      this.planeState.fuel -= .03
+      this.displayFuel()
       let position = "idle"
       if (this.pressedKeys.includes("left") && this.pressedKeys.length === 1) { position = "left" }
       else if (this.pressedKeys.includes("right") && this.pressedKeys.length === 1) { position = "right" }
@@ -147,6 +170,6 @@ export default class Plane extends ObjectRender {
   }
 
   destroy(): void {
-    console.log("")
+    console.log("debil")
   }
 }

@@ -4,6 +4,7 @@ export default class Enemy extends ObjectRender {
     constructor(ctx: CanvasRenderingContext2D, positionX?: number, positionY?: number) {
         super(ctx, undefined, positionX, positionY);
         this.hitboxRadius = 30
+
     }
 
     render(speed: number): void {

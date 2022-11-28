@@ -35,6 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import Enemy from "./Enemy.js";
+import EnemyPlaneDown from "./EnemyPlaneDown.js";
 import Plane from "./Plane.js";
 var angles = {
     x: Math.PI * .7,
@@ -71,6 +72,9 @@ var Game = /** @class */ (function () {
                     this.background.y = this.background.src.height - this.canvas.height;
                     this.background.x = 0;
                 } // rozmiar obrazka na canvasie
+                if (Date.now() % 154 === 0) {
+                    this.instances.entities.push(new EnemyPlaneDown(this.ctx, 50, this.canvas.width * .5));
+                }
                 _loop_1 = function (instance) {
                     this_1.instances[instance].forEach(function (e) {
                         if (instance == "projectiles") {

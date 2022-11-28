@@ -58,8 +58,11 @@ var Plane = /** @class */ (function (_super) {
                 _this.addProjectile(new Projectile(_this.ctx, _this, _this.altitude, _this.coordinates.x + _this.texture.width * .5, _this.coordinates.y));
                 _this.planeState.fired = true;
             }
-            else if ((event.key === "x" || event.key === "X") && _this.planeState.velocity.now >= _this.planeState.velocity.max && !_this.planeState.fired) {
+            else if ((event.key === "x" || event.key === "X") && Date.now() - _this.planeState.lastBomb > 2000 && _this.planeState.velocity.now >= _this.planeState.velocity.max && _this.planeState.bombs > 0) {
                 _this.addProjectile(new Bomb(_this.ctx, _this, _this.altitude, _this.createObject, _this.coordinates.x, _this.coordinates.y + _this.texture.height * .5));
+                _this.planeState.lastBomb = Date.now();
+                _this.planeState.bombs--;
+                _this.displayBombs();
             }
         };
         _this.release = function (event) {
@@ -71,6 +74,22 @@ var Plane = /** @class */ (function (_super) {
             if (event.key === " ") {
                 _this.planeState.fired = false;
             }
+        };
+        _this.displayBombs = function () {
+            document.getElementById("bombs").innerText =
+                _this.planeState.bombs >= 10 ?
+                    String(_this.planeState.bombs)
+                    : "0" + String(_this.planeState.bombs);
+        };
+        _this.displayFuel = function () {
+            var text = String(Math.round(_this.planeState.fuel));
+            if (_this.planeState.fuel < 100) {
+                text = "0" + String(Math.round(_this.planeState.fuel));
+            }
+            else if (_this.planeState.fuel < 10) {
+                text = "00" + String(Math.round(_this.planeState.fuel));
+            }
+            document.getElementById("fuel").innerText = text;
         };
         _this.render = function () {
             if (_this.pressedKeys.length != 0) {
@@ -99,8 +118,9 @@ var Plane = /** @class */ (function (_super) {
                     };
                 });
             }
-            //console.log(this.altitude)
             if (_this.planeState.velocity.now > 0) {
+                _this.planeState.fuel -= .03;
+                _this.displayFuel();
                 var position = "idle";
                 if (_this.pressedKeys.includes("left") && _this.pressedKeys.length === 1) {
                     position = "left";
@@ -123,6 +143,7 @@ var Plane = /** @class */ (function (_super) {
             },
             fired: false,
             bombs: 30,
+            lastBomb: 0,
             fuel: 300
         };
         _this.coordinates = {
@@ -143,12 +164,14 @@ var Plane = /** @class */ (function (_super) {
         }
         _this.texture = _this.sprites.idle[0];
         console.log(_this.sprites);
+        _this.displayBombs();
+        _this.displayFuel();
         window.addEventListener("keydown", _this.press);
         window.addEventListener("keyup", _this.release);
         return _this;
     }
     Plane.prototype.destroy = function () {
-        console.log("");
+        console.log("debil");
     };
     return Plane;
 }(ObjectRender));

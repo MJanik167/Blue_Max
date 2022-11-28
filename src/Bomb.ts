@@ -45,9 +45,7 @@ export default class Bomb extends Projectile {
         let inBlast: ObjectRender[] = []
         entities.forEach(e => {
             console.log(Math.sqrt((this.coordinates.x - e.coordinates.x) ** 2 + (this.coordinates.y - e.coordinates.y) ** 2) < (this.hitboxRadius + e.hitboxRadius) * this.blastingRadiusMultiplier)
-            if (Math.sqrt((this.coordinates.x - e.coordinates.x) ** 2 + (this.coordinates.y - e.coordinates.y) ** 2) < (this.hitboxRadius + e.hitboxRadius) * this.blastingRadiusMultiplier
-                && e !== this.origin
-            )
+            if (Math.sqrt((this.coordinates.x - e.coordinates.x) ** 2 + (this.coordinates.y - e.coordinates.y) ** 2) < (this.hitboxRadius + e.hitboxRadius) * this.blastingRadiusMultiplier)
                 inBlast.push(e)
         })
         console.log(inBlast)

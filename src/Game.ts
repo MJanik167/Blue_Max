@@ -1,4 +1,5 @@
 import Enemy from "./Enemy.js"
+import EnemyPlaneDown from "./EnemyPlaneDown.js"
 import ObjectRender from "./ObjectRender.js"
 import Plane from "./Plane.js"
 import Projectile from "./Projectile.js"
@@ -108,6 +109,11 @@ export default class Game {
             this.background.y = this.background.src.height - this.canvas.height
             this.background.x = 0
         } // rozmiar obrazka na canvasie
+
+
+        if (Date.now() % 154 === 0) {
+            this.instances.entities.push(new EnemyPlaneDown(this.ctx, 50, this.canvas.width * .5))
+        }
         // if (this.speed.now > 0 && Date.now() % 2 == 0) this.createInstance(ObjectRender, "tree1", false, 100 + Math.floor(Math.random() * 900), -100)
         for (let instance in this.instances) {
             this.instances[instance as instance].forEach(e => {

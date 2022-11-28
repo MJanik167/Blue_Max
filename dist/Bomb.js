@@ -39,8 +39,7 @@ var Bomb = /** @class */ (function (_super) {
             var inBlast = [];
             entities.forEach(function (e) {
                 console.log(Math.sqrt(Math.pow((_this.coordinates.x - e.coordinates.x), 2) + Math.pow((_this.coordinates.y - e.coordinates.y), 2)) < (_this.hitboxRadius + e.hitboxRadius) * _this.blastingRadiusMultiplier);
-                if (Math.sqrt(Math.pow((_this.coordinates.x - e.coordinates.x), 2) + Math.pow((_this.coordinates.y - e.coordinates.y), 2)) < (_this.hitboxRadius + e.hitboxRadius) * _this.blastingRadiusMultiplier
-                    && e !== _this.origin)
+                if (Math.sqrt(Math.pow((_this.coordinates.x - e.coordinates.x), 2) + Math.pow((_this.coordinates.y - e.coordinates.y), 2)) < (_this.hitboxRadius + e.hitboxRadius) * _this.blastingRadiusMultiplier)
                     inBlast.push(e);
             });
             console.log(inBlast);
