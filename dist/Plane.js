@@ -35,7 +35,7 @@ var spriteNames = {
 };
 var Plane = /** @class */ (function (_super) {
     __extends(Plane, _super);
-    function Plane(ctx, increaseSpeed, addProjectile) {
+    function Plane(ctx, increaseSpeed, addProjectile, createOject) {
         var _this = _super.call(this, ctx) || this;
         _this.press = function (event) {
             if (_this.planeState.velocity.now < _this.planeState.velocity.max - 0.1) {
@@ -59,7 +59,7 @@ var Plane = /** @class */ (function (_super) {
                 _this.planeState.fired = true;
             }
             else if ((event.key === "x" || event.key === "X") && _this.planeState.velocity.now >= _this.planeState.velocity.max && !_this.planeState.fired) {
-                _this.addProjectile(new Bomb(_this.ctx, _this, _this.altitude, _this.coordinates.x, _this.coordinates.y + _this.texture.height * .5));
+                _this.addProjectile(new Bomb(_this.ctx, _this, _this.altitude, _this.createObject, _this.coordinates.x, _this.coordinates.y + _this.texture.height * .5));
             }
         };
         _this.release = function (event) {
@@ -99,7 +99,7 @@ var Plane = /** @class */ (function (_super) {
                     };
                 });
             }
-            console.log(_this.altitude);
+            //console.log(this.altitude)
             if (_this.planeState.velocity.now > 0) {
                 var position = "idle";
                 if (_this.pressedKeys.includes("left") && _this.pressedKeys.length === 1) {
@@ -115,6 +115,7 @@ var Plane = /** @class */ (function (_super) {
         _this.pressedKeys = [];
         _this.increaseSpeed = increaseSpeed;
         _this.addProjectile = addProjectile;
+        _this.createObject = createOject;
         _this.planeState = {
             velocity: {
                 now: 0,
@@ -147,6 +148,7 @@ var Plane = /** @class */ (function (_super) {
         return _this;
     }
     Plane.prototype.destroy = function () {
+        console.log("");
     };
     return Plane;
 }(ObjectRender));

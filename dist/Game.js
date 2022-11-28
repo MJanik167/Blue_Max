@@ -78,14 +78,15 @@ var Game = /** @class */ (function () {
                             for (var instance_1 in _this.instances) {
                                 if (target)
                                     if (_this.instances[instance_1].includes(target)) {
-                                        target.destroy(_this.instances[instance_1]);
-                                        e.destroy(_this.instances.projectiles);
+                                        target.destroy(_this.instances[instance_1], _this.instances.entities);
+                                        if (e !== target)
+                                            e.destroy(_this.instances.projectiles, _this.instances.entities);
                                     }
                             }
                         }
                         if ((e.coordinates.x > _this.canvas.width || e.coordinates.x < 0 - e.texture.width)
                             || (e.coordinates.y < 0 - e.texture.height || e.coordinates.y > _this.canvas.height))
-                            e.destroy(_this.instances[instance]);
+                            e.destroy(_this.instances[instance], _this.instances.entities);
                         if (_this.instances[instance].includes(e))
                             e.render(_this.speed.now);
                     });
@@ -130,14 +131,13 @@ var Game = /** @class */ (function () {
         this.ctx = ctx;
         this.instances = {
             objects: new Array(0),
-            entities: new Array(1).fill(new Plane(this.ctx, this.increaseSpeed, function (e) { _this.instances.projectiles.push(e); })),
+            entities: new Array(1).fill(new Plane(this.ctx, this.increaseSpeed, function (e) { _this.instances.projectiles.push(e); }, function (e) { _this.instances.objects.push(e); })),
             projectiles: new Array(0)
         };
-        for (var i = 0; i < 5; i++) {
-            this.instances.entities.push(new Enemy(ctx, 100 + 100 * i, 100));
-            this.instances.entities.push(new Enemy(ctx, 100 + 100 * i, 150));
+        for (var i = 0; i < 15; i++) {
+            this.instances.entities.push(new Enemy(ctx, 100 + 60 * i, 300));
+            this.instances.entities.push(new Enemy(ctx, 100 + 60 * i, 350));
         }
-        this.instances.entities.push(new Enemy(ctx, 500, 100));
         this.frame();
     }
     return Game;

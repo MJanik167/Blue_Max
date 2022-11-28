@@ -39,5 +39,5 @@ export default abstract class ObjectRender {
   //   this.ctx.drawImage(this.texture, this.coordinates.x, this.coordinates.y)
   // }
 
-  abstract destroy(array: ObjectRender[]): void
+  abstract destroy(array: ObjectRender[], targets?: ObjectRender[]): void
 }

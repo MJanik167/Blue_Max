@@ -70,14 +70,13 @@ export default class Game {
         this.ctx = ctx
         this.instances = {
             objects: new Array<GameEntities>(0),
-            entities: new Array<GameEntities>(1).fill(new Plane(this.ctx, this.increaseSpeed, (e: Projectile): void => { this.instances.projectiles.push(e) })),
+            entities: new Array<GameEntities>(1).fill(new Plane(this.ctx, this.increaseSpeed, (e: Projectile): void => { this.instances.projectiles.push(e) }, (e: ObjectRender): void => { this.instances.objects.push(e) })),
             projectiles: new Array<GameEntities>(0)
         }
-        for (let i = 0; i < 5; i++) {
-            this.instances.entities.push(new Enemy(ctx, 100 + 100 * i, 100))
-            this.instances.entities.push(new Enemy(ctx, 100 + 100 * i, 150))
+        for (let i = 0; i < 15; i++) {
+            this.instances.entities.push(new Enemy(ctx, 100 + 60 * i, 300))
+            this.instances.entities.push(new Enemy(ctx, 100 + 60 * i, 350))
         }
-        this.instances.entities.push(new Enemy(ctx, 500, 100))
         this.frame()
     }
 
@@ -117,14 +116,15 @@ export default class Game {
                     for (let instance in this.instances) {
                         if (target)
                             if (this.instances[instance as instance].includes(target)) {
-                                target.destroy(this.instances[instance as instance])
-                                e.destroy(this.instances.projectiles)
+                                target.destroy(this.instances[instance as instance], this.instances.entities)
+                                if (e !== target)
+                                    e.destroy(this.instances.projectiles, this.instances.entities)
                             }
                     }
                 }
                 if ((e.coordinates.x > this.canvas.width || e.coordinates.x < 0 - e.texture.width)
                     || (e.coordinates.y < 0 - e.texture.height || e.coordinates.y > this.canvas.height))
-                    e.destroy(this.instances[instance as instance])
+                    e.destroy(this.instances[instance as instance], this.instances.entities)
                 if (this.instances[instance as instance].includes(e)) e.render(this.speed.now)
             })
         }

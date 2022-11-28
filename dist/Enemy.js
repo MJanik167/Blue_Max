@@ -23,8 +23,9 @@ var Enemy = /** @class */ (function (_super) {
     }
     Enemy.prototype.render = function (speed) {
         this.ctx.beginPath();
-        this.ctx.font = "15px Arial";
-        this.ctx.fillText("kurwiszon", this.coordinates.x - this.hitboxRadius * .5, this.coordinates.y + this.hitboxRadius * .5);
+        this.ctx.font = "12px Arial orange";
+        this.ctx.fillText("bo\u015Bniackie", this.coordinates.x - this.hitboxRadius * .5 + 5, this.coordinates.y + this.hitboxRadius * .5);
+        this.ctx.fillText("dziecko", this.coordinates.x - this.hitboxRadius * .5 + 5, this.coordinates.y + this.hitboxRadius * .5 + 15);
         this.ctx.arc(this.coordinates.x + this.hitboxRadius * .5, this.coordinates.y + this.hitboxRadius * .5, this.hitboxRadius, 0, Math.PI * 2);
         this.ctx.stroke();
     };

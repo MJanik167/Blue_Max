@@ -3,15 +3,16 @@ import ObjectRender from "./ObjectRender.js";
 
 export default class Projectile extends ObjectRender {
     origin: ObjectRender
+    speedMultiplier: number
     constructor(ctx: CanvasRenderingContext2D, origin: ObjectRender, altitude: number, positionX: number, positionY: number) {
         super(ctx, undefined, positionX, positionY);
         let texture = document.createElement("img")
+        texture.setAttribute("src", "/assets/projectile.png")
+        this.speedMultiplier = 20
         this.altitude = altitude
         this.origin = origin
-        texture.setAttribute("src", "/assets/projectile.png")
         this.texture = texture
         this.hitboxRadius = 10
-        console.log(this)
     }
 
     checkForCollision = (entities: ObjectRender[]): ObjectRender | undefined => {
@@ -23,20 +24,19 @@ export default class Projectile extends ObjectRender {
             )
                 object = e
         })
-        console.log(this.coordinates)
         return object
     }
 
     render(speed: number): void {
         this.coordinates = {
-            x: this.coordinates.x + speed * 20 * -Math.cos(this.isometricAngles.x),
-            y: this.coordinates.y + speed * 20 * -Math.cos(this.isometricAngles.y)
+            x: this.coordinates.x + speed * this.speedMultiplier * -Math.cos(this.isometricAngles.x),
+            y: this.coordinates.y + speed * this.speedMultiplier * -Math.cos(this.isometricAngles.y)
         }
         this.ctx.drawImage(this.texture, this.coordinates.x, this.coordinates.y)
     }
 
-    destroy(array: ObjectRender[]): void {
-        let index = array.findIndex(e => e === this)
-        array.splice(index, 1)
+    destroy(myArray: ObjectRender[]): void {
+        let index = myArray.findIndex(e => e === this)
+        myArray.splice(index, 1)
     }
 }

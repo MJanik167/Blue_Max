@@ -26,29 +26,28 @@ var Projectile = /** @class */ (function (_super) {
                     && (_this.altitude <= e.altitude + 15 && _this.altitude >= e.altitude - 15))
                     object = e;
             });
-            console.log(_this.coordinates);
             return object;
         };
         var texture = document.createElement("img");
+        texture.setAttribute("src", "/assets/projectile.png");
+        _this.speedMultiplier = 20;
         _this.altitude = altitude;
         _this.origin = origin;
-        texture.setAttribute("src", "/assets/projectile.png");
         _this.texture = texture;
         _this.hitboxRadius = 10;
-        console.log(_this);
         return _this;
     }
     Projectile.prototype.render = function (speed) {
         this.coordinates = {
-            x: this.coordinates.x + speed * 20 * -Math.cos(this.isometricAngles.x),
-            y: this.coordinates.y + speed * 20 * -Math.cos(this.isometricAngles.y)
+            x: this.coordinates.x + speed * this.speedMultiplier * -Math.cos(this.isometricAngles.x),
+            y: this.coordinates.y + speed * this.speedMultiplier * -Math.cos(this.isometricAngles.y)
         };
         this.ctx.drawImage(this.texture, this.coordinates.x, this.coordinates.y);
     };
-    Projectile.prototype.destroy = function (array) {
+    Projectile.prototype.destroy = function (myArray) {
         var _this = this;
-        var index = array.findIndex(function (e) { return e === _this; });
-        array.splice(index, 1);
+        var index = myArray.findIndex(function (e) { return e === _this; });
+        myArray.splice(index, 1);
     };
     return Projectile;
 }(ObjectRender));

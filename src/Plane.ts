@@ -43,12 +43,14 @@ export default class Plane extends ObjectRender {
   planeState: planeState
   increaseSpeed: (e: number) => void
   addProjectile: (e: Projectile) => void
-  constructor(ctx: CanvasRenderingContext2D, increaseSpeed: (speed: number) => void, addProjectile: (e: Projectile) => void) {
+  createObject: (e: ObjectRender) => void
+  constructor(ctx: CanvasRenderingContext2D, increaseSpeed: (speed: number) => void, addProjectile: (e: Projectile) => void, createOject: (newObject: ObjectRender) => void) {
     super(ctx)
 
     this.pressedKeys = []
     this.increaseSpeed = increaseSpeed
     this.addProjectile = addProjectile
+    this.createObject = createOject
     this.planeState = {
       velocity: {
         now: 0,
@@ -104,7 +106,7 @@ export default class Plane extends ObjectRender {
       this.planeState.fired = true
     }
     else if ((event.key === "x" || event.key === "X") && this.planeState.velocity.now >= this.planeState.velocity.max && !this.planeState.fired) {
-      this.addProjectile(new Bomb(this.ctx, this, this.altitude, this.coordinates.x, this.coordinates.y + this.texture.height * .5))
+      this.addProjectile(new Bomb(this.ctx, this, this.altitude, this.createObject, this.coordinates.x, this.coordinates.y + this.texture.height * .5))
     }
   }
 
@@ -134,7 +136,7 @@ export default class Plane extends ObjectRender {
         }
       })
     }
-    console.log(this.altitude)
+    //console.log(this.altitude)
     if (this.planeState.velocity.now > 0) {
       let position = "idle"
       if (this.pressedKeys.includes("left") && this.pressedKeys.length === 1) { position = "left" }
@@ -145,6 +147,6 @@ export default class Plane extends ObjectRender {
   }
 
   destroy(): void {
-
+    console.log("")
   }
 }
