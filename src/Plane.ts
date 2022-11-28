@@ -1,5 +1,6 @@
 import ObjectRender from "./ObjectRender.js";
 import Projectile from "./Projectile.js";
+import Bomb from "./Bomb.js"
 
 type Directions = "left" | "right" | "up" | "down"
 
@@ -9,7 +10,7 @@ const directions: { [directions in Directions]: string[] } = {
   left: ["ArrowLeft", "a", "A"],
   right: ["ArrowRight", "d", "D"],
   up: ["ArrowUp", "w", "W"],
-  down: ["ArrowDown", "s", "S"],
+  down: ["ArrowDown", "s", "S"]
 }
 
 const angles: { [angles in Directions]: number } = {
@@ -25,24 +26,38 @@ const spriteNames: { [state in states]: string[] } = {
   right: ["right1b.png", "right2b.png"]
 }
 
+interface planeState {
+  velocity: {
+    now: number
+    max: number
+  },
+  fired: boolean,
+  bombs: number,
+  fuel: number
+}
+
 
 export default class Plane extends ObjectRender {
   pressedKeys: Array<Directions>
-  velocity: number
-  maxvelocity: number
   sprites: { [state in states]: HTMLImageElement[] }
-  fired: boolean
+  planeState: planeState
   increaseSpeed: (e: number) => void
   addProjectile: (e: Projectile) => void
   constructor(ctx: CanvasRenderingContext2D, increaseSpeed: (speed: number) => void, addProjectile: (e: Projectile) => void) {
     super(ctx)
 
     this.pressedKeys = []
-    this.fired = false
     this.increaseSpeed = increaseSpeed
     this.addProjectile = addProjectile
-    this.velocity = 0
-    this.maxvelocity = 5
+    this.planeState = {
+      velocity: {
+        now: 0,
+        max: 5
+      },
+      fired: false,
+      bombs: 30,
+      fuel: 300
+    }
 
     this.coordinates = {
       x: 230,
@@ -71,18 +86,26 @@ export default class Plane extends ObjectRender {
   }
 
   press = (event: KeyboardEvent) => {
-    if (this.velocity < this.maxvelocity && directions["up"].includes(event.key)) {
-      this.velocity += 0.05
-      this.increaseSpeed(this.velocity)
+    if (this.planeState.velocity.now < this.planeState.velocity.max - 0.1) {
+      if (directions["up"].includes(event.key)) {
+        this.planeState.velocity.now += 0.1
+        this.increaseSpeed(this.planeState.velocity.now)
+      }
       return
-    } else if (this.velocity >= this.maxvelocity) { this.velocity = this.maxvelocity }
+    }
+    this.planeState.velocity.now = this.planeState.velocity.max
     for (let direction in directions) {
       if (directions[direction as Directions].includes(event.key))
         if (this.pressedKeys.includes(direction as Directions)) { return }
         else this.pressedKeys.push(direction as Directions)
     }
-    if (event.key === " " && this.velocity >= this.maxvelocity && !this.fired)
-      this.shoot()
+    if (event.key === " " && this.planeState.velocity.now >= this.planeState.velocity.max && !this.planeState.fired) {
+      this.addProjectile(new Projectile(this.ctx, this, this.altitude, this.coordinates.x + this.texture.width * .5, this.coordinates.y))
+      this.planeState.fired = true
+    }
+    else if ((event.key === "x" || event.key === "X") && this.planeState.velocity.now >= this.planeState.velocity.max && !this.planeState.fired) {
+      this.addProjectile(new Bomb(this.ctx, this, this.altitude, this.coordinates.x, this.coordinates.y + this.texture.height * .5))
+    }
   }
 
   release = (event: KeyboardEvent) => {
@@ -92,31 +115,27 @@ export default class Plane extends ObjectRender {
           this.pressedKeys.splice(this.pressedKeys.indexOf(direction as Directions))
     }
     if (event.key === " ") {
-      this.fired = false
+      this.planeState.fired = false
     }
-  }
-
-  shoot = () => {
-    this.addProjectile(new Projectile(this.ctx, this, this.coordinates.x + this.texture.width * .5, this.coordinates.y))
-    this.fired = true
   }
 
   render = () => {
     if (this.pressedKeys.length != 0) {
       this.pressedKeys.forEach(e => {
-        let addX = Math.cos(angles[e as Directions])
-        let addY = 0
-        if (this.coordinates.x < 0) { this.coordinates.x = 0; addX = 0 }
-        else if (this.coordinates.x > 640 - this.texture.width) { this.coordinates.x = 640 - this.texture.width; addX = 0 }
-        if (this.coordinates.y > 480 - this.texture.height) { this.coordinates.y = 480 - this.texture.height; addY = 0 }
-        else if (this.coordinates.y < 0) { this.coordinates.y = 0; addY = 0 }
+        if (this.coordinates.x < 0) { this.coordinates.x = 0 }
+        else if (this.coordinates.x > 640 - this.texture.width) { this.coordinates.x = 640 - this.texture.width }
+        if (this.coordinates.y > 480 - this.texture.height) { this.coordinates.y = 480 - this.texture.height }
+        else if (this.coordinates.y < 0) { this.coordinates.y = 0 }
+        if (e === "up" && this.planeState.velocity.now === this.planeState.velocity.max && this.coordinates.y != 0) { document.getElementById("altitude")!.innerText = String(Math.round(this.altitude += 1.5)) }
+        else if (e === "down" && this.planeState.velocity.now === this.planeState.velocity.max && this.altitude > 0) { document.getElementById("altitude")!.innerText = String(Math.round(this.altitude -= 1.5)) }
         this.coordinates = {
-          x: this.coordinates.x + this.velocity * addX,
-          y: this.coordinates.y + this.velocity * Math.sin(angles[e as Directions])
+          x: this.coordinates.x + this.planeState.velocity.now * Math.cos(angles[e as Directions]),
+          y: this.coordinates.y + this.planeState.velocity.now * Math.sin(angles[e as Directions])
         }
       })
     }
-    if (this.velocity > 0) {
+    console.log(this.altitude)
+    if (this.planeState.velocity.now > 0) {
       let position = "idle"
       if (this.pressedKeys.includes("left") && this.pressedKeys.length === 1) { position = "left" }
       else if (this.pressedKeys.includes("right") && this.pressedKeys.length === 1) { position = "right" }

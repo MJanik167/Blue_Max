@@ -44,11 +44,11 @@ var Game = /** @class */ (function () {
     function Game(canvas, ctx) {
         var _this = this;
         this.increaseSpeed = function (speed) {
+            document.getElementById("speed").innerText = String(Math.round((speed * 100) / 2.5));
             if (_this.speed.now > _this.speed.max) {
                 return;
             }
             _this.speed.now += 0.05;
-            document.getElementById("speed").innerText = String(Math.round(speed * 100));
         };
         // createInstance = (object: GameObject, image: string, isEntity: boolean, positionX?: number, positionY?: number) => {
         //     if (isEntity)
@@ -135,7 +135,7 @@ var Game = /** @class */ (function () {
         };
         for (var i = 0; i < 5; i++) {
             this.instances.entities.push(new Enemy(ctx, 100 + 100 * i, 100));
-            this.instances.entities.push(new Enemy(ctx, 100 + 100 * i, 250));
+            this.instances.entities.push(new Enemy(ctx, 100 + 100 * i, 150));
         }
         this.instances.entities.push(new Enemy(ctx, 500, 100));
         this.frame();

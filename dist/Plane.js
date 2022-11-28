@@ -15,11 +15,12 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import ObjectRender from "./ObjectRender.js";
 import Projectile from "./Projectile.js";
+import Bomb from "./Bomb.js";
 var directions = {
     left: ["ArrowLeft", "a", "A"],
     right: ["ArrowRight", "d", "D"],
     up: ["ArrowUp", "w", "W"],
-    down: ["ArrowDown", "s", "S"],
+    down: ["ArrowDown", "s", "S"]
 };
 var angles = {
     left: Math.PI * 1.05,
@@ -37,14 +38,14 @@ var Plane = /** @class */ (function (_super) {
     function Plane(ctx, increaseSpeed, addProjectile) {
         var _this = _super.call(this, ctx) || this;
         _this.press = function (event) {
-            if (_this.velocity < _this.maxvelocity && directions["up"].includes(event.key)) {
-                _this.velocity += 0.05;
-                _this.increaseSpeed(_this.velocity);
+            if (_this.planeState.velocity.now < _this.planeState.velocity.max - 0.1) {
+                if (directions["up"].includes(event.key)) {
+                    _this.planeState.velocity.now += 0.1;
+                    _this.increaseSpeed(_this.planeState.velocity.now);
+                }
                 return;
             }
-            else if (_this.velocity >= _this.maxvelocity) {
-                _this.velocity = _this.maxvelocity;
-            }
+            _this.planeState.velocity.now = _this.planeState.velocity.max;
             for (var direction in directions) {
                 if (directions[direction].includes(event.key))
                     if (_this.pressedKeys.includes(direction)) {
@@ -53,8 +54,13 @@ var Plane = /** @class */ (function (_super) {
                     else
                         _this.pressedKeys.push(direction);
             }
-            if (event.key === " " && _this.velocity >= _this.maxvelocity && !_this.fired)
-                _this.shoot();
+            if (event.key === " " && _this.planeState.velocity.now >= _this.planeState.velocity.max && !_this.planeState.fired) {
+                _this.addProjectile(new Projectile(_this.ctx, _this, _this.altitude, _this.coordinates.x + _this.texture.width * .5, _this.coordinates.y));
+                _this.planeState.fired = true;
+            }
+            else if ((event.key === "x" || event.key === "X") && _this.planeState.velocity.now >= _this.planeState.velocity.max && !_this.planeState.fired) {
+                _this.addProjectile(new Bomb(_this.ctx, _this, _this.altitude, _this.coordinates.x, _this.coordinates.y + _this.texture.height * .5));
+            }
         };
         _this.release = function (event) {
             for (var direction in directions) {
@@ -63,41 +69,38 @@ var Plane = /** @class */ (function (_super) {
                         _this.pressedKeys.splice(_this.pressedKeys.indexOf(direction));
             }
             if (event.key === " ") {
-                _this.fired = false;
+                _this.planeState.fired = false;
             }
-        };
-        _this.shoot = function () {
-            _this.addProjectile(new Projectile(_this.ctx, _this, _this.coordinates.x + _this.texture.width * .5, _this.coordinates.y));
-            _this.fired = true;
         };
         _this.render = function () {
             if (_this.pressedKeys.length != 0) {
                 _this.pressedKeys.forEach(function (e) {
-                    var addX = Math.cos(angles[e]);
-                    var addY = 0;
                     if (_this.coordinates.x < 0) {
                         _this.coordinates.x = 0;
-                        addX = 0;
                     }
                     else if (_this.coordinates.x > 640 - _this.texture.width) {
                         _this.coordinates.x = 640 - _this.texture.width;
-                        addX = 0;
                     }
                     if (_this.coordinates.y > 480 - _this.texture.height) {
                         _this.coordinates.y = 480 - _this.texture.height;
-                        addY = 0;
                     }
                     else if (_this.coordinates.y < 0) {
                         _this.coordinates.y = 0;
-                        addY = 0;
+                    }
+                    if (e === "up" && _this.planeState.velocity.now === _this.planeState.velocity.max && _this.coordinates.y != 0) {
+                        document.getElementById("altitude").innerText = String(Math.round(_this.altitude += 1.5));
+                    }
+                    else if (e === "down" && _this.planeState.velocity.now === _this.planeState.velocity.max && _this.altitude > 0) {
+                        document.getElementById("altitude").innerText = String(Math.round(_this.altitude -= 1.5));
                     }
                     _this.coordinates = {
-                        x: _this.coordinates.x + _this.velocity * addX,
-                        y: _this.coordinates.y + _this.velocity * Math.sin(angles[e])
+                        x: _this.coordinates.x + _this.planeState.velocity.now * Math.cos(angles[e]),
+                        y: _this.coordinates.y + _this.planeState.velocity.now * Math.sin(angles[e])
                     };
                 });
             }
-            if (_this.velocity > 0) {
+            console.log(_this.altitude);
+            if (_this.planeState.velocity.now > 0) {
                 var position = "idle";
                 if (_this.pressedKeys.includes("left") && _this.pressedKeys.length === 1) {
                     position = "left";
@@ -110,11 +113,17 @@ var Plane = /** @class */ (function (_super) {
             _this.ctx.drawImage(_this.texture, _this.coordinates.x, _this.coordinates.y);
         };
         _this.pressedKeys = [];
-        _this.fired = false;
         _this.increaseSpeed = increaseSpeed;
         _this.addProjectile = addProjectile;
-        _this.velocity = 0;
-        _this.maxvelocity = 5;
+        _this.planeState = {
+            velocity: {
+                now: 0,
+                max: 5
+            },
+            fired: false,
+            bombs: 30,
+            fuel: 300
+        };
         _this.coordinates = {
             x: 230,
             y: 420

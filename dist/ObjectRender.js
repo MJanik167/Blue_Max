@@ -7,6 +7,7 @@ var ObjectRender = /** @class */ (function () {
         this.isometricAngles = angles;
         this.ctx = ctx;
         this.hitboxRadius = 10;
+        this.altitude = 0;
         this.texture = document.createElement("img");
         if (texture != undefined) {
             this.texture.setAttribute("src", "../assets/".concat(texture, ".png"));

@@ -16,18 +16,21 @@ var __extends = (this && this.__extends) || (function () {
 import ObjectRender from "./ObjectRender.js";
 var Projectile = /** @class */ (function (_super) {
     __extends(Projectile, _super);
-    function Projectile(ctx, origin, positionX, positionY) {
+    function Projectile(ctx, origin, altitude, positionX, positionY) {
         var _this = _super.call(this, ctx, undefined, positionX, positionY) || this;
         _this.checkForCollision = function (entities) {
             var object = undefined;
             entities.forEach(function (e) {
-                if (Math.sqrt(Math.pow(_this.coordinates.x - e.coordinates.x, 2) + Math.pow(_this.coordinates.y - e.coordinates.y, 2)) < _this.hitboxRadius + e.hitboxRadius && e !== _this.origin)
+                if (Math.sqrt(Math.pow(_this.coordinates.x - e.coordinates.x, 2) + Math.pow(_this.coordinates.y - e.coordinates.y, 2)) < _this.hitboxRadius + e.hitboxRadius
+                    && e !== _this.origin
+                    && (_this.altitude <= e.altitude + 15 && _this.altitude >= e.altitude - 15))
                     object = e;
             });
             console.log(_this.coordinates);
             return object;
         };
         var texture = document.createElement("img");
+        _this.altitude = altitude;
         _this.origin = origin;
         texture.setAttribute("src", "/assets/projectile.png");
         _this.texture = texture;

@@ -75,17 +75,16 @@ export default class Game {
         }
         for (let i = 0; i < 5; i++) {
             this.instances.entities.push(new Enemy(ctx, 100 + 100 * i, 100))
-            this.instances.entities.push(new Enemy(ctx, 100 + 100 * i, 250))
+            this.instances.entities.push(new Enemy(ctx, 100 + 100 * i, 150))
         }
         this.instances.entities.push(new Enemy(ctx, 500, 100))
         this.frame()
     }
 
     increaseSpeed = (speed: number) => {
+        document.getElementById("speed")!.innerText = String(Math.round((speed * 100) / 2.5))
         if (this.speed.now > this.speed.max) { return }
         this.speed.now += 0.05;
-        document.getElementById("speed")!.innerText = String(Math.round(speed * 100))
-
     }
 
     // createInstance = (object: GameObject, image: string, isEntity: boolean, positionX?: number, positionY?: number) => {

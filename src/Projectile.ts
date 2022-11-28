@@ -3,9 +3,10 @@ import ObjectRender from "./ObjectRender.js";
 
 export default class Projectile extends ObjectRender {
     origin: ObjectRender
-    constructor(ctx: CanvasRenderingContext2D, origin: ObjectRender, positionX: number, positionY: number) {
+    constructor(ctx: CanvasRenderingContext2D, origin: ObjectRender, altitude: number, positionX: number, positionY: number) {
         super(ctx, undefined, positionX, positionY);
         let texture = document.createElement("img")
+        this.altitude = altitude
         this.origin = origin
         texture.setAttribute("src", "/assets/projectile.png")
         this.texture = texture
@@ -16,7 +17,10 @@ export default class Projectile extends ObjectRender {
     checkForCollision = (entities: ObjectRender[]): ObjectRender | undefined => {
         let object = undefined
         entities.forEach(e => {
-            if (Math.sqrt(Math.pow(this.coordinates.x - e.coordinates.x, 2) + Math.pow(this.coordinates.y - e.coordinates.y, 2)) < this.hitboxRadius + e.hitboxRadius && e !== this.origin)
+            if (Math.sqrt(Math.pow(this.coordinates.x - e.coordinates.x, 2) + Math.pow(this.coordinates.y - e.coordinates.y, 2)) < this.hitboxRadius + e.hitboxRadius
+                && e !== this.origin
+                && (this.altitude <= e.altitude + 15 && this.altitude >= e.altitude - 15)
+            )
                 object = e
         })
         console.log(this.coordinates)

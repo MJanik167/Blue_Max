@@ -16,10 +16,12 @@ export default abstract class ObjectRender {
   coordinates: coords
   isometricAngles: coords
   hitboxRadius: number
+  altitude: number
   constructor(ctx: CanvasRenderingContext2D, texture?: string, positionX?: number, positionY?: number) {
     this.isometricAngles = angles
     this.ctx = ctx
     this.hitboxRadius = 10
+    this.altitude = 0
     this.texture = document.createElement("img")
     if (texture != undefined) { this.texture.setAttribute("src", `../assets/${texture}.png`) }
     this.coordinates = {
