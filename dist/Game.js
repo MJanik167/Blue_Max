@@ -34,6 +34,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+import Airport from "./Airport.js";
 import Enemy from "./Enemy.js";
 import EnemyPlaneDown from "./EnemyPlaneDown.js";
 import EnemyPlaneUp from "./EnemyPlaneUp.js";
@@ -68,14 +69,15 @@ var Game = /** @class */ (function () {
                 this.canvas.width, this.canvas.height, //wielkość wyciętego fragmentu
                 0, 0, // pozycja obrazka na canvasie
                 this.canvas.width, this.canvas.height);
+                console.log(this.speed.now);
+                if (Date.now() % 154 === 0 && this.speed.now >= this.speed.max) {
+                    this.instances.entities.push(Math.floor(Math.random() * 2) === 1 ? new EnemyPlaneDown(this.ctx, 50, function (e) { _this.instances.projectiles.push(e); }, Math.floor(Math.random() * this.canvas.width)) : new EnemyPlaneUp(this.ctx, 50, function (e) { _this.instances.projectiles.push(e); }, Math.floor(Math.random() * this.canvas.width)));
+                }
                 // console.log(this.background.y, this.background.src.height)
                 if (this.background.y < 0) {
                     this.background.y = this.background.src.height - this.canvas.height;
                     this.background.x = 0;
                 } // rozmiar obrazka na canvasie
-                if (Date.now() % 154 === 0) {
-                    this.instances.entities.push(Math.floor(Math.random() * 2) === 1 ? new EnemyPlaneDown(this.ctx, 50, function (e) { _this.instances.projectiles.push(e); }, Math.floor(Math.random() * this.canvas.width)) : new EnemyPlaneUp(this.ctx, 50, function (e) { _this.instances.projectiles.push(e); }, Math.floor(Math.random() * this.canvas.width)));
-                }
                 _loop_1 = function (instance) {
                     this_1.instances[instance].forEach(function (e) {
                         if (instance == "projectiles") {
@@ -90,7 +92,7 @@ var Game = /** @class */ (function () {
                             }
                         }
                         if ((e.coordinates.x > _this.canvas.width || e.coordinates.x < 0 - e.texture.width)
-                            || (e.coordinates.y < 0 - e.texture.height || e.coordinates.y > _this.canvas.height))
+                            || (e.coordinates.y < 0 - e.texture.height || e.coordinates.y > Math.pow(_this.canvas.height, 2)))
                             e.destroy(_this.instances[instance], _this.instances.entities);
                         if (_this.instances[instance].includes(e))
                             e.render(_this.speed.now);
@@ -135,7 +137,7 @@ var Game = /** @class */ (function () {
         this.canvas = canvas;
         this.ctx = ctx;
         this.instances = {
-            objects: new Array(0),
+            objects: new Array(1).fill(new Airport(this.ctx)),
             entities: new Array(1).fill(new Plane(this.ctx, this.increaseSpeed, function (e) { _this.instances.projectiles.push(e); }, function (e) { _this.instances.objects.push(e); })),
             projectiles: new Array(0)
         };
@@ -144,7 +146,7 @@ var Game = /** @class */ (function () {
             this.instances.entities.push(new Enemy(ctx, 100 + 60 * i, 350));
         }
         this.frame();
-        this.instances.entities.push(new EnemyPlaneUp(this.ctx, 50, function (e) { _this.instances.projectiles.push(e); }, Math.floor(Math.random() * this.canvas.width)));
+        //this.instances.entities.push(new EnemyPlaneUp(this.ctx, 50, (e: Projectile): void => { this.instances.projectiles.push(e) }, Math.floor(Math.random() * this.canvas.width)))
     }
     return Game;
 }());

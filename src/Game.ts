@@ -1,3 +1,4 @@
+import Airport from "./Airport.js"
 import Enemy from "./Enemy.js"
 import EnemyPlaneDown from "./EnemyPlaneDown.js"
 import EnemyPlaneUp from "./EnemyPlaneUp.js"
@@ -71,7 +72,7 @@ export default class Game {
         this.canvas = canvas
         this.ctx = ctx
         this.instances = {
-            objects: new Array<GameEntities>(0),
+            objects: new Array<GameEntities>(1).fill(new Airport(this.ctx)),
             entities: new Array<GameEntities>(1).fill(new Plane(this.ctx, this.increaseSpeed, (e: Projectile): void => { this.instances.projectiles.push(e) }, (e: ObjectRender): void => { this.instances.objects.push(e) })),
             projectiles: new Array<GameEntities>(0)
         }
@@ -80,7 +81,7 @@ export default class Game {
             this.instances.entities.push(new Enemy(ctx, 100 + 60 * i, 350))
         }
         this.frame()
-        this.instances.entities.push(new EnemyPlaneUp(this.ctx, 50, (e: Projectile): void => { this.instances.projectiles.push(e) }, Math.floor(Math.random() * this.canvas.width)))
+        //this.instances.entities.push(new EnemyPlaneUp(this.ctx, 50, (e: Projectile): void => { this.instances.projectiles.push(e) }, Math.floor(Math.random() * this.canvas.width)))
     }
 
     increaseSpeed = (speed: number) => {
@@ -106,16 +107,16 @@ export default class Game {
             0, 0, // pozycja obrazka na canvasie
             this.canvas.width, this.canvas.height
         )
+
+        console.log(this.speed.now)
+        if (Date.now() % 154 === 0 && this.speed.now >= this.speed.max) {
+            this.instances.entities.push(Math.floor(Math.random() * 2) === 1 ? new EnemyPlaneDown(this.ctx, 50, (e: Projectile): void => { this.instances.projectiles.push(e) }, Math.floor(Math.random() * this.canvas.width)) : new EnemyPlaneUp(this.ctx, 50, (e: Projectile): void => { this.instances.projectiles.push(e) }, Math.floor(Math.random() * this.canvas.width)))
+        }
         // console.log(this.background.y, this.background.src.height)
         if (this.background.y < 0) {
             this.background.y = this.background.src.height - this.canvas.height
             this.background.x = 0
         } // rozmiar obrazka na canvasie
-
-
-        if (Date.now() % 154 === 0) {
-            this.instances.entities.push(Math.floor(Math.random() * 2) === 1 ? new EnemyPlaneDown(this.ctx, 50, (e: Projectile): void => { this.instances.projectiles.push(e) }, Math.floor(Math.random() * this.canvas.width)) : new EnemyPlaneUp(this.ctx, 50, (e: Projectile): void => { this.instances.projectiles.push(e) }, Math.floor(Math.random() * this.canvas.width)))
-        }
         // if (this.speed.now > 0 && Date.now() % 2 == 0) this.createInstance(ObjectRender, "tree1", false, 100 + Math.floor(Math.random() * 900), -100)
         for (let instance in this.instances) {
             this.instances[instance as instance].forEach(e => {
@@ -131,7 +132,7 @@ export default class Game {
                     }
                 }
                 if ((e.coordinates.x > this.canvas.width || e.coordinates.x < 0 - e.texture.width)
-                    || (e.coordinates.y < 0 - e.texture.height || e.coordinates.y > this.canvas.height))
+                    || (e.coordinates.y < 0 - e.texture.height || e.coordinates.y > this.canvas.height ** 2))
                     e.destroy(this.instances[instance as instance], this.instances.entities)
                 if (this.instances[instance as instance].includes(e)) e.render(this.speed.now)
             })
