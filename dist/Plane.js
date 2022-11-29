@@ -94,6 +94,9 @@ var Plane = /** @class */ (function (_super) {
         _this.render = function () {
             if (_this.pressedKeys.length != 0) {
                 _this.pressedKeys.forEach(function (e) {
+                    if (e === "down" && _this.altitude <= 25) {
+                        return;
+                    }
                     if (_this.coordinates.x < 0) {
                         _this.coordinates.x = 0;
                     }

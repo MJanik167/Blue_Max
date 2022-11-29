@@ -45,7 +45,10 @@ export default class Plane extends ObjectRender {
   increaseSpeed: (e: number) => void
   addProjectile: (e: Projectile) => void
   createObject: (e: ObjectRender) => void
-  constructor(ctx: CanvasRenderingContext2D, increaseSpeed: (speed: number) => void, addProjectile: (e: Projectile) => void, createOject: (newObject: ObjectRender) => void) {
+  constructor(ctx: CanvasRenderingContext2D,
+    increaseSpeed: (speed: number) => void,
+    addProjectile: (e: Projectile) => void,
+    createOject: (newObject: ObjectRender) => void) {
     super(ctx)
 
     this.pressedKeys = []
@@ -140,12 +143,12 @@ export default class Plane extends ObjectRender {
     if (this.planeState.fuel < 100) { text = "0" + String(Math.round(this.planeState.fuel)) }
     else if (this.planeState.fuel < 10) { text = "00" + String(Math.round(this.planeState.fuel)) }
     document.getElementById("fuel")!.innerText = text
-
   }
 
   render = () => {
     if (this.pressedKeys.length != 0) {
       this.pressedKeys.forEach(e => {
+        if (e === "down" && this.altitude <= 25) { return }
         if (this.coordinates.x < 0) { this.coordinates.x = 0 }
         else if (this.coordinates.x > 640 - this.texture.width) { this.coordinates.x = 640 - this.texture.width }
         if (this.coordinates.y > 480 - this.texture.height) { this.coordinates.y = 480 - this.texture.height }
