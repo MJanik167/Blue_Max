@@ -218,7 +218,7 @@ var Plane = /** @class */ (function (_super) {
         var _this = this;
         var index = array.findIndex(function (e) { return e === _this; });
         array.splice(index, 1);
-        this.createObject(new Texture(this.ctx, "dziura", this.coordinates.x, this.coordinates.y));
+        this.createObject(new Texture(this.ctx, "dziura", this.coordinates.x, this.coordinates.y, 0));
     };
     return Plane;
 }(ObjectRender));

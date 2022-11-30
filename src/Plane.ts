@@ -224,6 +224,6 @@ export default class Plane extends ObjectRender {
   destroy(array: ObjectRender[]): void {
     let index = array.findIndex(e => e === this)
     array.splice(index, 1)
-    this.createObject(new Texture(this.ctx, "dziura", this.coordinates.x, this.coordinates.y))
+    this.createObject(new Texture(this.ctx, "dziura", this.coordinates.x, this.coordinates.y, 0))
   }
 }
