@@ -1,14 +1,16 @@
 import Airport from "./Airport.js"
+import Building from "./Building.js"
 import Enemy from "./Enemy.js"
 import EnemyPlaneDown from "./EnemyPlaneDown.js"
 import EnemyPlaneUp from "./EnemyPlaneUp.js"
 import ObjectRender from "./ObjectRender.js"
 import Plane from "./Plane.js"
 import Projectile from "./Projectile.js"
+import Tank from "./Tank.js"
+import Texture from "./Texture.js"
 
 
 type GameEntities = ObjectRender
-type GameObject = typeof ObjectRender
 
 type angles = "x" | "y"
 
@@ -76,18 +78,28 @@ export default class Game {
             entities: new Array<GameEntities>(1).fill(new Plane(this.ctx, this.increaseSpeed, (e: Projectile): void => { this.instances.projectiles.push(e) }, (e: ObjectRender): void => { this.instances.objects.push(e) })),
             projectiles: new Array<GameEntities>(0)
         }
-        for (let i = 0; i < 15; i++) {
-            this.instances.entities.push(new Enemy(ctx, 100 + 60 * i, 300))
-            this.instances.entities.push(new Enemy(ctx, 100 + 60 * i, 350))
-        }
+
+        this.instances.entities.push(new Tank(ctx, 500))
+
+        //this.instances.entities.push(new Building(this.ctx, 3, 500, (e: Texture): void => { this.instances.objects.push(e) }))
+
+        // for (let i = 0; i < 15; i++) {
+        //     this.instances.entities.push(new Enemy(ctx, 100 + 60 * i, 300))
+        //     this.instances.entities.push(new Enemy(ctx, 100 + 60 * i, 350))
+        // }
         this.frame()
         //this.instances.entities.push(new EnemyPlaneUp(this.ctx, 50, (e: Projectile): void => { this.instances.projectiles.push(e) }, Math.floor(Math.random() * this.canvas.width)))
     }
 
     increaseSpeed = (speed: number) => {
-        document.getElementById("speed")!.innerText = String(Math.round((speed * 100) / 2.5))
+        document.getElementById("speed")!.innerText = String(Math.round((speed >= 0 ? speed * 100 : 0) / 2.5))
+        if (speed < 0) {
+            this.speed.now > 0.2 ? this.speed.now -= 0.2 : 0
+        }
+        console.log(this.speed.now)
         if (this.speed.now > this.speed.max) { return }
-        this.speed.now += 0.05;
+        if (speed > 0) this.speed.now += 0.05
+
     }
 
     // createInstance = (object: GameObject, image: string, isEntity: boolean, positionX?: number, positionY?: number) => {
@@ -107,16 +119,21 @@ export default class Game {
             0, 0, // pozycja obrazka na canvasie
             this.canvas.width, this.canvas.height
         )
-
-        console.log(this.speed.now)
         if (Date.now() % 154 === 0 && this.speed.now >= this.speed.max) {
             this.instances.entities.push(Math.floor(Math.random() * 2) === 1 ? new EnemyPlaneDown(this.ctx, 50, (e: Projectile): void => { this.instances.projectiles.push(e) }, Math.floor(Math.random() * this.canvas.width)) : new EnemyPlaneUp(this.ctx, 50, (e: Projectile): void => { this.instances.projectiles.push(e) }, Math.floor(Math.random() * this.canvas.width)))
         }
         // console.log(this.background.y, this.background.src.height)
+        console.log(this.instances.entities)
         if (this.background.y < 0) {
             this.background.y = this.background.src.height - this.canvas.height
             this.background.x = 0
-        } // rozmiar obrazka na canvasie
+        }
+        if (this.background.y < 510 && this.instances.objects.length === 0) {//&& parseInt(document.getElementById('fuel')!.innerText) < 200) {
+            this.instances.objects.push(new Airport(this.ctx, 800, -275));
+            (this.instances.entities[0] as Plane).planeState.overAirport = true
+        }
+
+        // rozmiar obrazka na canvasie
         // if (this.speed.now > 0 && Date.now() % 2 == 0) this.createInstance(ObjectRender, "tree1", false, 100 + Math.floor(Math.random() * 900), -100)
         for (let instance in this.instances) {
             this.instances[instance as instance].forEach(e => {
@@ -125,14 +142,15 @@ export default class Game {
                     for (let instance in this.instances) {
                         if (target)
                             if (this.instances[instance as instance].includes(target)) {
+                                console.log(this.instances[instance as instance])
                                 target.destroy(this.instances[instance as instance], this.instances.entities)
                                 if (e !== target)
                                     e.destroy(this.instances.projectiles, this.instances.entities)
                             }
                     }
                 }
-                if ((e.coordinates.x > this.canvas.width || e.coordinates.x < 0 - e.texture.width)
-                    || (e.coordinates.y < 0 - e.texture.height || e.coordinates.y > this.canvas.height ** 2))
+                if ((e.coordinates.x > this.canvas.width ** 2 || e.coordinates.x < 0 - e.texture.width - 200)
+                    || (e.coordinates.y < 0 - e.texture.height - 200 || e.coordinates.y > this.canvas.height ** 2))
                     e.destroy(this.instances[instance as instance], this.instances.entities)
                 if (this.instances[instance as instance].includes(e)) e.render(this.speed.now)
             })

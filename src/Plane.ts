@@ -34,7 +34,9 @@ interface planeState {
   fired: boolean,
   lastBomb: number,
   bombs: number,
-  fuel: number
+  fuel: number,
+  overAirport: boolean,
+  landing: boolean
 }
 
 
@@ -63,7 +65,9 @@ export default class Plane extends ObjectRender {
       fired: false,
       bombs: 30,
       lastBomb: 0,
-      fuel: 300
+      fuel: 300,
+      overAirport: false,
+      landing: false
     }
 
     this.coordinates = {
@@ -86,7 +90,6 @@ export default class Plane extends ObjectRender {
     }
 
     this.texture = this.sprites.idle[0]
-    console.log(this.sprites)
     this.displayBombs()
     this.displayFuel()
 
@@ -146,9 +149,44 @@ export default class Plane extends ObjectRender {
   }
 
   render = () => {
+    if (this.planeState.landing) {
+      this.planeState.velocity.now = 0
+      this.altitude > 0 ? this.altitude -= 0.5 : this.altitude = 0
+      document.getElementById("altitude")!.innerText = String(this.altitude > 10 ? Math.round(this.altitude) : 0 + String(Math.round(this.altitude)))
+      this.increaseSpeed(-0.5)
+      this.coordinates = {
+        x: this.coordinates.x <= 260 ? this.coordinates.x + 1.5 * Math.cos(angles['down' as Directions]) : this.coordinates.x,
+        y: this.coordinates.y <= 420 ? this.coordinates.y + 1.5 * Math.sin(angles['down' as Directions]) : this.coordinates.y
+      }
+      if (this.planeState.velocity.now === 0) {
+        setTimeout(() => {
+          this.planeState = {
+            velocity: {
+              now: 0,
+              max: 5
+            },
+            fired: false,
+            bombs: 30,
+            lastBomb: 0,
+            fuel: 300,
+            overAirport: false,
+            landing: false
+          }
+          this.altitude = 0
+          this.planeState.landing = false
+          this.displayBombs()
+          this.displayFuel()
+        }, 2000);
+      }
+    }
+
+
     if (this.pressedKeys.length != 0) {
       this.pressedKeys.forEach(e => {
-        if (e === "down" && this.altitude <= 25) { return }
+        if (e === "down" && this.altitude <= 25) {
+          if (!this.planeState.overAirport) { return }
+          else { this.planeState.landing = true }
+        }
         if (this.coordinates.x < 0) { this.coordinates.x = 0 }
         else if (this.coordinates.x > 640 - this.texture.width) { this.coordinates.x = 640 - this.texture.width }
         if (this.coordinates.y > 480 - this.texture.height) { this.coordinates.y = 480 - this.texture.height }

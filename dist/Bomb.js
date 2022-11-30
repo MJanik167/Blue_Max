@@ -28,7 +28,6 @@ var Bomb = /** @class */ (function (_super) {
                     object = _this;
                 }
             });
-            console.log(_this.altitude);
             if (_this.altitude <= 0) {
                 object = _this;
             }
@@ -41,7 +40,6 @@ var Bomb = /** @class */ (function (_super) {
                 if (Math.sqrt(Math.pow((_this.coordinates.x - e.coordinates.x), 2) + Math.pow((_this.coordinates.y - e.coordinates.y), 2)) < (_this.hitboxRadius + e.hitboxRadius) * _this.blastingRadiusMultiplier)
                     inBlast.push(e);
             });
-            console.log(inBlast);
             inBlast.forEach(function (element) {
                 element.destroy(entities);
             });
@@ -67,7 +65,6 @@ var Bomb = /** @class */ (function (_super) {
         var _this = this;
         var index = array.findIndex(function (e) { return e === _this; });
         array.splice(index, 1);
-        console.log(targets);
         this.explode(targets);
         this.createObject(new Texture(this.ctx, "dziura", this.coordinates.x, this.coordinates.y, (this.hitboxRadius + 30) * this.blastingRadiusMultiplier));
     };

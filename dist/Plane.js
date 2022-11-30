@@ -92,10 +92,45 @@ var Plane = /** @class */ (function (_super) {
             document.getElementById("fuel").innerText = text;
         };
         _this.render = function () {
+            if (_this.planeState.landing) {
+                _this.planeState.velocity.now = 0;
+                _this.altitude > 0 ? _this.altitude -= 0.5 : _this.altitude = 0;
+                document.getElementById("altitude").innerText = String(_this.altitude > 10 ? Math.round(_this.altitude) : 0 + String(Math.round(_this.altitude)));
+                _this.increaseSpeed(-0.5);
+                _this.coordinates = {
+                    x: _this.coordinates.x <= 260 ? _this.coordinates.x + 1.5 * Math.cos(angles['down']) : _this.coordinates.x,
+                    y: _this.coordinates.y <= 420 ? _this.coordinates.y + 1.5 * Math.sin(angles['down']) : _this.coordinates.y
+                };
+                if (_this.planeState.velocity.now === 0) {
+                    setTimeout(function () {
+                        _this.planeState = {
+                            velocity: {
+                                now: 0,
+                                max: 5
+                            },
+                            fired: false,
+                            bombs: 30,
+                            lastBomb: 0,
+                            fuel: 300,
+                            overAirport: false,
+                            landing: false
+                        };
+                        _this.altitude = 0;
+                        _this.planeState.landing = false;
+                        _this.displayBombs();
+                        _this.displayFuel();
+                    }, 2000);
+                }
+            }
             if (_this.pressedKeys.length != 0) {
                 _this.pressedKeys.forEach(function (e) {
                     if (e === "down" && _this.altitude <= 25) {
-                        return;
+                        if (!_this.planeState.overAirport) {
+                            return;
+                        }
+                        else {
+                            _this.planeState.landing = true;
+                        }
                     }
                     if (_this.coordinates.x < 0) {
                         _this.coordinates.x = 0;
@@ -147,7 +182,9 @@ var Plane = /** @class */ (function (_super) {
             fired: false,
             bombs: 30,
             lastBomb: 0,
-            fuel: 300
+            fuel: 300,
+            overAirport: false,
+            landing: false
         };
         _this.coordinates = {
             x: 260,
@@ -166,7 +203,6 @@ var Plane = /** @class */ (function (_super) {
             });
         }
         _this.texture = _this.sprites.idle[0];
-        console.log(_this.sprites);
         _this.displayBombs();
         _this.displayFuel();
         window.addEventListener("keydown", _this.press);

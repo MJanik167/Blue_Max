@@ -25,7 +25,6 @@ export default class Bomb extends Projectile {
                 object = this
             }
         })
-        console.log(this.altitude)
         if ((this as ObjectRender).altitude <= 0) {
             object = this
         }
@@ -35,7 +34,6 @@ export default class Bomb extends Projectile {
     destroy(array: ObjectRender[], targets?: ObjectRender[]): void {
         let index = array.findIndex(e => e === this)
         array.splice(index, 1)
-        console.log(targets)
         this.explode(targets!)
         this.createObject(new Texture(this.ctx, "dziura", this.coordinates.x, this.coordinates.y, (this.hitboxRadius + 30) * this.blastingRadiusMultiplier))
     }
@@ -47,7 +45,6 @@ export default class Bomb extends Projectile {
             if (Math.sqrt((this.coordinates.x - e.coordinates.x) ** 2 + (this.coordinates.y - e.coordinates.y) ** 2) < (this.hitboxRadius + e.hitboxRadius) * this.blastingRadiusMultiplier)
                 inBlast.push(e)
         })
-        console.log(inBlast)
         inBlast.forEach(element => {
             element.destroy(entities)
         });

@@ -14,24 +14,23 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import ObjectRender from "./ObjectRender.js";
-var Enemy = /** @class */ (function (_super) {
-    __extends(Enemy, _super);
-    function Enemy(ctx, positionX, positionY) {
-        var _this = _super.call(this, ctx, undefined, positionX, positionY) || this;
-        _this.speedMultiplier = 1.3;
-        _this.hitboxRadius = 30;
-        _this.sprites = {
-            idle: [],
-            left: [],
-            right: []
-        };
+var Tank = /** @class */ (function (_super) {
+    __extends(Tank, _super);
+    function Tank(ctx, positionX) {
+        var _this = _super.call(this, ctx, "tank", positionX, -100) || this;
+        _this.hitboxRadius = 8;
         return _this;
     }
-    Enemy.prototype.render = function (speed) {
+    Tank.prototype.render = function (speed) {
+        this.coordinates = {
+            x: this.coordinates.x + speed * Math.cos(this.isometricAngles.x),
+            y: this.coordinates.y + speed * Math.cos(this.isometricAngles.y)
+        };
+        this.ctx.drawImage(this.texture, this.coordinates.x - this.texture.width * .5, this.coordinates.y - this.texture.height * .5);
         this.ctx.beginPath();
-        this.ctx.arc(this.coordinates.x, this.coordinates.y, this.hitboxRadius, 0, Math.PI * 2);
+        this.ctx.arc(this.coordinates.x, this.coordinates.y, this.hitboxRadius * 200, 0, Math.PI * 2);
         this.ctx.stroke();
     };
-    return Enemy;
+    return Tank;
 }(ObjectRender));
-export default Enemy;
+export default Tank;
