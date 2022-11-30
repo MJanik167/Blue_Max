@@ -16,6 +16,7 @@ var ObjectRender = /** @class */ (function () {
             x: positionX !== null && positionX !== void 0 ? positionX : 0,
             y: positionY !== null && positionY !== void 0 ? positionY : 0
         };
+        this.isAirport = false;
     }
     // => {
     //   this.coordinates = {

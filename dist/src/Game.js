@@ -40,6 +40,7 @@ import EnemyPlaneDown from "./EnemyPlaneDown.js";
 import EnemyPlaneUp from "./EnemyPlaneUp.js";
 import Plane from "./Plane.js";
 import Tank from "./Tank.js";
+import enemyData from "../enemyData.json";
 var angles = {
     x: Math.PI * .7,
     y: Math.PI * .2
@@ -58,35 +59,14 @@ var Game = /** @class */ (function () {
             if (speed > 0)
                 _this.speed.now += 0.05;
         };
-        this.makeTanks = function (x) {
-            var _loop_1 = function (i) {
-                for (var j = 0; j < 3; j++) {
-                    setTimeout(function () {
-                        Math.floor(Math.random() * 2) == 0 ? _this.instances.entities.unshift(new Tank(_this.ctx, x + 36 * i, function (e) { return (_this.instances.objects.push(e)); })) : 0;
-                    }, 200 * j);
-                }
-            };
-            for (var i = 0; i < 8; i++) {
-                _loop_1(i);
-            }
-        };
         // createInstance = (object: GameObject, image: string, isEntity: boolean, positionX?: number, positionY?: number) => {
         //     if (isEntity)
         //         this.instances.entities.push(new object(this.ctx, image, positionX, positionY))
         //     else
         //         this.instances.objects.push(new object(this.ctx, image, positionX, positionY))
         // }
-        this.gameOver = function () {
-            _this.player.destroy(_this.instances.entities);
-            _this.speed.now = 0;
-            _this.instances.entities = [];
-            _this.instances.projectiles = [];
-            setTimeout(function () {
-                alert("koniec gry");
-            }, 2000);
-        };
         this.frame = function () { return __awaiter(_this, void 0, void 0, function () {
-            var _loop_2, this_1, instance;
+            var _loop_1, this_1, instance;
             var _this = this;
             return __generator(this, function (_a) {
                 // this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
@@ -95,18 +75,28 @@ var Game = /** @class */ (function () {
                 this.canvas.width, this.canvas.height, //wielkość wyciętego fragmentu
                 0, 0, // pozycja obrazka na canvasie
                 this.canvas.width, this.canvas.height);
-                if (Date.now() % 154 === 0 && this.speed.now >= this.speed.max && this.background.y > 500) {
-                    this.instances.entities.push(Math.floor(Math.random() * 2) === 1 ? new EnemyPlaneDown(this.ctx, Math.floor((Math.random() * 40) + 30), function (e) { _this.instances.projectiles.push(e); }, Math.floor(Math.random() * this.canvas.width)) : new EnemyPlaneUp(this.ctx, Math.floor((Math.random() * 70) + 40), function (e) { _this.instances.projectiles.push(e); }, Math.floor(Math.random() * this.canvas.width)));
+                this.ctx.beginPath();
+                this.ctx.moveTo(0, this.canvas.height * .5);
+                this.ctx.lineTo(this.canvas.width, this.canvas.height * .5);
+                this.ctx.moveTo(20, this.canvas.height * .5);
+                this.ctx.font = "30px Arial";
+                this.ctx.fillText(String(this.background.y), 10, 50);
+                this.ctx.stroke();
+                if (Date.now() % 154 === 0 && this.speed.now >= this.speed.max) {
+                    this.instances.entities.push(Math.floor(Math.random() * 2) === 1 ? new EnemyPlaneDown(this.ctx, 50, function (e) { _this.instances.projectiles.push(e); }, Math.floor(Math.random() * this.canvas.width)) : new EnemyPlaneUp(this.ctx, 50, function (e) { _this.instances.projectiles.push(e); }, Math.floor(Math.random() * this.canvas.width)));
                 }
                 if (this.background.y < 0) {
-                    this.map = Math.floor(Math.random() * 2);
                     this.background.y = this.background.src.height - this.canvas.height;
-                    this.background.x = this.map === 0 ? this.canvas.width : 0;
+                    this.background.x = this.canvas.width;
                 }
-                if (this.background.y < 510 && !this.instances.objects.find(function (e) { return e.isAirport === true; }) && this.player.planeState.fuel < 180) { //&& parseInt(document.getElementById('fuel')!.innerText) < 200) {
+                if (this.background.y < 510 && !this.instances.objects.find(function (e) { return e.isAirport === true; })) { //&& parseInt(document.getElementById('fuel')!.innerText) < 200) {
                     this.instances.objects.push(new Airport(this.ctx, 800, -275));
                 }
-                _loop_2 = function (instance) {
+                if (Object.keys(enemyData).includes('"' + this.background.y + '"')) {
+                    console.log(Object.keys(enemyData));
+                    enemyData['"' + this.background.y + '"'];
+                }
+                _loop_1 = function (instance) {
                     this_1.instances[instance].forEach(function (e) {
                         if (instance == "projectiles") {
                             var target = e.checkForCollision(_this.instances.entities);
@@ -114,10 +104,6 @@ var Game = /** @class */ (function () {
                                 if (target)
                                     if (_this.instances[instance_1].includes(target)) {
                                         target.destroy(_this.instances[instance_1], _this.instances.entities);
-                                        document.getElementById("score").innerText = String(parseInt(document.getElementById("score").innerText) + 10);
-                                        if (target === _this.player) {
-                                            _this.gameOver();
-                                        }
                                         if (e !== target)
                                             e.destroy(_this.instances.projectiles, _this.instances.entities);
                                     }
@@ -134,53 +120,12 @@ var Game = /** @class */ (function () {
                 // rozmiar obrazka na canvasie
                 // if (this.speed.now > 0 && Date.now() % 2 == 0) this.createInstance(ObjectRender, "tree1", false, 100 + Math.floor(Math.random() * 900), -100)
                 for (instance in this.instances) {
-                    _loop_2(instance);
-                }
-                if (this.speed.now >= this.speed.max) {
-                    if (this.map == 1) {
-                        if (this.background.y < 2900 && this.background.y > 2898)
-                            this.makeTanks(500);
-                        if (this.background.y < 1990 && this.background.y > 1988) {
-                            this.makeTanks(700);
-                            this.instances.entities.unshift(new Building(this.ctx, 2, 700, function (e) { return (_this.instances.objects.push(e)); }));
-                        }
-                        if (this.background.y < 1600 && this.background.y > 1598) {
-                            this.instances.entities.unshift(new Building(this.ctx, 3, 700, function (e) { return (_this.instances.objects.push(e)); }));
-                        }
-                        if (this.background.y < 1300 && this.background.y > 1298) {
-                            this.makeTanks(700);
-                            this.instances.entities.unshift(new Building(this.ctx, 3, 600, function (e) { return (_this.instances.objects.push(e)); }));
-                        }
-                        if (this.background.y < 800 && this.background.y > 798) {
-                            this.instances.entities.unshift(new Building(this.ctx, 1, 800, function (e) { return (_this.instances.objects.push(e)); }));
-                        }
-                    }
-                    if (this.map == 0) {
-                        if (this.background.y < 2900 && this.background.y > 2898)
-                            this.makeTanks(500);
-                        if (this.background.y < 1990 && this.background.y > 1988) {
-                            this.makeTanks(700);
-                            this.instances.entities.unshift(new Building(this.ctx, 2, 400, function (e) { return (_this.instances.objects.push(e)); }));
-                        }
-                        if (this.background.y < 1600 && this.background.y > 1598) {
-                            this.instances.entities.unshift(new Building(this.ctx, 5, 700, function (e) { return (_this.instances.objects.push(e)); }));
-                            this.instances.entities.unshift(new Building(this.ctx, 5, 900, function (e) { return (_this.instances.objects.push(e)); }));
-                        }
-                        if (this.background.y < 1300 && this.background.y > 1298) {
-                            this.makeTanks(700);
-                            this.instances.entities.unshift(new Building(this.ctx, 3, 400, function (e) { return (_this.instances.objects.push(e)); }));
-                        }
-                        if (this.background.y < 800 && this.background.y > 798) {
-                            this.instances.entities.unshift(new Building(this.ctx, 1, 800, function (e) { return (_this.instances.objects.push(e)); }));
-                        }
-                    }
+                    _loop_1(instance);
                 }
                 requestAnimationFrame(this.frame);
                 return [2 /*return*/];
             });
         }); };
-        this.map = 0;
-        this.canvas = canvas;
         this.speed = {
             now: 0,
             max: 2
@@ -195,19 +140,19 @@ var Game = /** @class */ (function () {
         img.setAttribute("src", "../assets/testb.png");
         this.background = {
             src: img,
-            x: this.map === 0 ? this.canvas.width : 0,
+            x: 0,
             y: img.height - canvas.height
         };
+        this.canvas = canvas;
         this.ctx = ctx;
         this.instances = {
             objects: new Array(1).fill(new Airport(this.ctx)),
             entities: new Array(0),
             projectiles: new Array(0)
         };
-        this.player = new Plane(this.ctx, this.increaseSpeed, function (e) { _this.instances.projectiles.push(e); }, function (e) { _this.instances.objects.push(e); }, this.instances.objects);
-        this.instances.entities.push(this.player);
-        // this.instances.entities.push(new Tank(ctx, 500, (e: Texture) => { this.instances.objects.push(e) }))
-        // this.instances.entities.unshift(new Building(ctx, 3, 500, (e: Texture) => { this.instances.objects.push(e) }))
+        this.instances.entities.push(new Plane(this.ctx, this.increaseSpeed, function (e) { _this.instances.projectiles.push(e); }, function (e) { _this.instances.objects.push(e); }, this.instances.objects));
+        this.instances.entities.push(new Tank(ctx, 500, function (e) { _this.instances.objects.push(e); }));
+        this.instances.entities.unshift(new Building(ctx, 3, 500, function (e) { _this.instances.objects.push(e); }));
         //this.instances.entities.push(new Building(this.ctx, 3, 500, (e: Texture): void => { this.instances.objects.push(e) }))
         // for (let i = 0; i < 15; i++) {
         //     this.instances.entities.push(new Enemy(ctx, 100 + 60 * i, 300))

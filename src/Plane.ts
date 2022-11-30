@@ -1,6 +1,8 @@
 import ObjectRender from "./ObjectRender.js";
 import Projectile from "./Projectile.js";
 import Bomb from "./Bomb.js"
+import Shadow from "./Shadow.js";
+import Texture from "./Texture.js";
 
 type Directions = "left" | "right" | "up" | "down"
 
@@ -44,16 +46,21 @@ export default class Plane extends ObjectRender {
   pressedKeys: Array<Directions>
   sprites: { [state in states]: HTMLImageElement[] }
   planeState: planeState
+  shadow: Shadow
+  gameObjects: ObjectRender[]
   increaseSpeed: (e: number) => void
   addProjectile: (e: Projectile) => void
   createObject: (e: ObjectRender) => void
   constructor(ctx: CanvasRenderingContext2D,
     increaseSpeed: (speed: number) => void,
     addProjectile: (e: Projectile) => void,
-    createOject: (newObject: ObjectRender) => void) {
+    createOject: (newObject: ObjectRender) => void,
+    gameObjects: ObjectRender[]
+  ) {
     super(ctx)
 
     this.pressedKeys = []
+    this.gameObjects = gameObjects
     this.increaseSpeed = increaseSpeed
     this.addProjectile = addProjectile
     this.createObject = createOject
@@ -90,6 +97,7 @@ export default class Plane extends ObjectRender {
     }
 
     this.texture = this.sprites.idle[0]
+    this.shadow = new Shadow(this.ctx, this, true)
     this.displayBombs()
     this.displayFuel()
 
@@ -115,7 +123,7 @@ export default class Plane extends ObjectRender {
       this.addProjectile(new Projectile(this.ctx, this, this.altitude, this.coordinates.x + this.texture.width * .5, this.coordinates.y))
       this.planeState.fired = true
     }
-    else if ((event.key === "x" || event.key === "X") && Date.now() - this.planeState.lastBomb > 2000 && this.planeState.velocity.now >= this.planeState.velocity.max && this.planeState.bombs > 0) {
+    else if ((event.key === "x" || event.key === "X") && this.planeState.velocity.now >= this.planeState.velocity.max && this.planeState.bombs > 0) {
       this.addProjectile(new Bomb(this.ctx, this, this.altitude, this.createObject, this.coordinates.x, this.coordinates.y + this.texture.height * .5))
       this.planeState.lastBomb = Date.now()
       this.planeState.bombs--
@@ -183,6 +191,7 @@ export default class Plane extends ObjectRender {
 
     if (this.pressedKeys.length != 0) {
       this.pressedKeys.forEach(e => {
+
         if (e === "down" && this.altitude <= 25) {
           if (!this.planeState.overAirport) { return }
           else { this.planeState.landing = true }
@@ -207,10 +216,14 @@ export default class Plane extends ObjectRender {
       else if (this.pressedKeys.includes("right") && this.pressedKeys.length === 1) { position = "right" }
       this.texture = Date.now() % 3 == 0 ? this.sprites[position as states][0] : this.sprites[position as states][1]
     }
+
+    this.shadow.render(0, undefined, undefined, this.gameObjects)
     this.ctx.drawImage(this.texture, this.coordinates.x - this.texture.width * .5, this.coordinates.y - this.texture.height * .5)
   }
 
-  destroy(): void {
-    console.log("debil")
+  destroy(array: ObjectRender[]): void {
+    let index = array.findIndex(e => e === this)
+    array.splice(index, 1)
+    this.createObject(new Texture(this.ctx, "dziura", this.coordinates.x, this.coordinates.y))
   }
 }

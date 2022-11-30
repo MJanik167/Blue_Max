@@ -17,6 +17,7 @@ export default abstract class ObjectRender {
   isometricAngles: coords
   hitboxRadius: number
   altitude: number
+  isAirport: boolean
   constructor(ctx: CanvasRenderingContext2D, texture?: string, positionX?: number, positionY?: number) {
     this.isometricAngles = angles
     this.ctx = ctx
@@ -28,6 +29,7 @@ export default abstract class ObjectRender {
       x: positionX ?? 0,
       y: positionY ?? 0
     }
+    this.isAirport = false
   }
 
   abstract render(speed: number): void

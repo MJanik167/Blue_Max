@@ -47,10 +47,6 @@ var Projectile = /** @class */ (function (_super) {
             y: this.coordinates.y + speed * this.speedMultiplier * -Math.cos(this.isometricAngles.y)
         };
         this.ctx.drawImage(this.texture, this.coordinates.x - this.texture.width * .5, this.coordinates.y - this.texture.height * .5);
-        this.ctx.beginPath();
-        this.ctx.arc(this.coordinates.x, this.coordinates.y, 5, 0, Math.PI * 2);
-        this.ctx.arc(this.coordinates.x, this.coordinates.y, this.hitboxRadius, 0, Math.PI * 2);
-        this.ctx.stroke();
     };
     return Projectile;
 }(ObjectRender));

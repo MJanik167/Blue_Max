@@ -8,7 +8,7 @@ export default class Bomb extends Projectile {
     createObject: (e: ObjectRender) => void
     constructor(ctx: CanvasRenderingContext2D, parent: ObjectRender, altitude: number, createObject: (e: ObjectRender) => void, positionX: number, positionY: number) {
         super(ctx, parent, altitude, positionX, positionY)
-
+        this.texture.setAttribute('src', '/assets/bomb.png')
         this.createObject = createObject
         this.blastingRadiusMultiplier = 1.8
         this.fallingSpeed = 2.5
@@ -20,9 +20,8 @@ export default class Bomb extends Projectile {
         entities.forEach(e => {
             if (Math.sqrt((this.coordinates.x - e.coordinates.x) ** 2 + (this.coordinates.y - e.coordinates.y) ** 2) < this.hitboxRadius + e.hitboxRadius
                 && e !== this.origin
-                && (this.altitude <= e.altitude + 25 && this.altitude >= e.altitude - 25)
-            ) {
-                object = this
+                && e.altitude <= this.altitude + 10 && e.altitude >= this.altitude - 15) {
+                object = e
             }
         })
         if ((this as ObjectRender).altitude <= 0) {
@@ -39,14 +38,15 @@ export default class Bomb extends Projectile {
     }
 
     explode = (entities: ObjectRender[]): void => {
-        console.log("bumba")
         let inBlast: ObjectRender[] = []
         entities.forEach(e => {
-            if (Math.sqrt((this.coordinates.x - e.coordinates.x) ** 2 + (this.coordinates.y - e.coordinates.y) ** 2) < (this.hitboxRadius + e.hitboxRadius) * this.blastingRadiusMultiplier)
+            if (Math.sqrt((this.coordinates.x - e.coordinates.x) ** 2 + (this.coordinates.y - e.coordinates.y) ** 2) < (this.hitboxRadius + e.hitboxRadius) * this.blastingRadiusMultiplier
+                && e.altitude < 25)
                 inBlast.push(e)
         })
         inBlast.forEach(element => {
             element.destroy(entities)
+            document.getElementById("score")!.innerText = String(parseInt(document.getElementById("score")!.innerText) + 10)
         });
     }
 
@@ -56,11 +56,6 @@ export default class Bomb extends Projectile {
             y: this.coordinates.y + this.fallingSpeed
         }
         this.altitude -= 1
-        this.ctx.beginPath()
-        this.ctx.arc(this.coordinates.x, this.coordinates.y, 1, 0, Math.PI * 2)
-        this.ctx.arc(this.coordinates.x, this.coordinates.y, this.hitboxRadius, 0, Math.PI * 2)
-        this.ctx.stroke()
         this.ctx.drawImage(this.texture, this.coordinates.x - this.texture.width * .5, this.coordinates.y - this.texture.height * .5)
-
     }
 }

@@ -24,8 +24,8 @@ var Bomb = /** @class */ (function (_super) {
             entities.forEach(function (e) {
                 if (Math.sqrt(Math.pow((_this.coordinates.x - e.coordinates.x), 2) + Math.pow((_this.coordinates.y - e.coordinates.y), 2)) < _this.hitboxRadius + e.hitboxRadius
                     && e !== _this.origin
-                    && (_this.altitude <= e.altitude + 25 && _this.altitude >= e.altitude - 25)) {
-                    object = _this;
+                    && e.altitude <= _this.altitude + 10 && e.altitude >= _this.altitude - 15) {
+                    object = e;
                 }
             });
             if (_this.altitude <= 0) {
@@ -34,14 +34,15 @@ var Bomb = /** @class */ (function (_super) {
             return object;
         };
         _this.explode = function (entities) {
-            console.log("bumba");
             var inBlast = [];
             entities.forEach(function (e) {
-                if (Math.sqrt(Math.pow((_this.coordinates.x - e.coordinates.x), 2) + Math.pow((_this.coordinates.y - e.coordinates.y), 2)) < (_this.hitboxRadius + e.hitboxRadius) * _this.blastingRadiusMultiplier)
+                if (Math.sqrt(Math.pow((_this.coordinates.x - e.coordinates.x), 2) + Math.pow((_this.coordinates.y - e.coordinates.y), 2)) < (_this.hitboxRadius + e.hitboxRadius) * _this.blastingRadiusMultiplier
+                    && e.altitude < 25)
                     inBlast.push(e);
             });
             inBlast.forEach(function (element) {
                 element.destroy(entities);
+                document.getElementById("score").innerText = String(parseInt(document.getElementById("score").innerText) + 10);
             });
         };
         _this.render = function (speed) {
@@ -50,12 +51,9 @@ var Bomb = /** @class */ (function (_super) {
                 y: _this.coordinates.y + _this.fallingSpeed
             };
             _this.altitude -= 1;
-            _this.ctx.beginPath();
-            _this.ctx.arc(_this.coordinates.x, _this.coordinates.y, 1, 0, Math.PI * 2);
-            _this.ctx.arc(_this.coordinates.x, _this.coordinates.y, _this.hitboxRadius, 0, Math.PI * 2);
-            _this.ctx.stroke();
             _this.ctx.drawImage(_this.texture, _this.coordinates.x - _this.texture.width * .5, _this.coordinates.y - _this.texture.height * .5);
         };
+        _this.texture.setAttribute('src', '/assets/bomb.png');
         _this.createObject = createObject;
         _this.blastingRadiusMultiplier = 1.8;
         _this.fallingSpeed = 2.5;

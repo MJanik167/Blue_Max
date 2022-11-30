@@ -16,6 +16,8 @@ var __extends = (this && this.__extends) || (function () {
 import ObjectRender from "./ObjectRender.js";
 import Projectile from "./Projectile.js";
 import Bomb from "./Bomb.js";
+import Shadow from "./Shadow.js";
+import Texture from "./Texture.js";
 var directions = {
     left: ["ArrowLeft", "a", "A"],
     right: ["ArrowRight", "d", "D"],
@@ -35,7 +37,7 @@ var spriteNames = {
 };
 var Plane = /** @class */ (function (_super) {
     __extends(Plane, _super);
-    function Plane(ctx, increaseSpeed, addProjectile, createOject) {
+    function Plane(ctx, increaseSpeed, addProjectile, createOject, gameObjects) {
         var _this = _super.call(this, ctx) || this;
         _this.press = function (event) {
             if (_this.planeState.velocity.now < _this.planeState.velocity.max - 0.1) {
@@ -58,7 +60,7 @@ var Plane = /** @class */ (function (_super) {
                 _this.addProjectile(new Projectile(_this.ctx, _this, _this.altitude, _this.coordinates.x + _this.texture.width * .5, _this.coordinates.y));
                 _this.planeState.fired = true;
             }
-            else if ((event.key === "x" || event.key === "X") && Date.now() - _this.planeState.lastBomb > 2000 && _this.planeState.velocity.now >= _this.planeState.velocity.max && _this.planeState.bombs > 0) {
+            else if ((event.key === "x" || event.key === "X") && _this.planeState.velocity.now >= _this.planeState.velocity.max && _this.planeState.bombs > 0) {
                 _this.addProjectile(new Bomb(_this.ctx, _this, _this.altitude, _this.createObject, _this.coordinates.x, _this.coordinates.y + _this.texture.height * .5));
                 _this.planeState.lastBomb = Date.now();
                 _this.planeState.bombs--;
@@ -168,9 +170,11 @@ var Plane = /** @class */ (function (_super) {
                 }
                 _this.texture = Date.now() % 3 == 0 ? _this.sprites[position][0] : _this.sprites[position][1];
             }
+            _this.shadow.render(0, undefined, undefined, _this.gameObjects);
             _this.ctx.drawImage(_this.texture, _this.coordinates.x - _this.texture.width * .5, _this.coordinates.y - _this.texture.height * .5);
         };
         _this.pressedKeys = [];
+        _this.gameObjects = gameObjects;
         _this.increaseSpeed = increaseSpeed;
         _this.addProjectile = addProjectile;
         _this.createObject = createOject;
@@ -203,14 +207,18 @@ var Plane = /** @class */ (function (_super) {
             });
         }
         _this.texture = _this.sprites.idle[0];
+        _this.shadow = new Shadow(_this.ctx, _this, true);
         _this.displayBombs();
         _this.displayFuel();
         window.addEventListener("keydown", _this.press);
         window.addEventListener("keyup", _this.release);
         return _this;
     }
-    Plane.prototype.destroy = function () {
-        console.log("debil");
+    Plane.prototype.destroy = function (array) {
+        var _this = this;
+        var index = array.findIndex(function (e) { return e === _this; });
+        array.splice(index, 1);
+        this.createObject(new Texture(this.ctx, "dziura", this.coordinates.x, this.coordinates.y));
     };
     return Plane;
 }(ObjectRender));

@@ -15,6 +15,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import Enemy from "./Enemy.js";
 import Projectile from "./Projectile.js";
+import Shadow from "./Shadow.js";
 var spriteNames = {
     idle: ["idle1.png", "idle2.png"],
     left: ["left1.png", "left2.png"],
@@ -38,6 +39,7 @@ var EnemyPlaneUp = /** @class */ (function (_super) {
                 return img;
             });
         }
+        _this.shadow = new Shadow(_this.ctx, _this);
         _this.texture = _this.sprites["idle"][0];
         _this.hitboxRadius = 16;
         return _this;
@@ -51,11 +53,9 @@ var EnemyPlaneUp = /** @class */ (function (_super) {
             y: this.coordinates.y + speed * this.speedMultiplier * -Math.cos(this.isometricAngles.y)
         };
         this.texture = Date.now() % 3 == 0 ? this.sprites["idle"][0] : this.sprites["idle"][1];
+        this.shadow.render(speed * this.speedMultiplier, -Math.cos(this.isometricAngles.x), -Math.cos(this.isometricAngles.y));
         this.ctx.drawImage(this.texture, this.coordinates.x - this.texture.width * .5, this.coordinates.y - this.texture.height * .5);
         this.ctx.beginPath();
-        this.ctx.arc(this.coordinates.x, this.coordinates.y, 5, 0, Math.PI * 2);
-        this.ctx.arc(this.coordinates.x, this.coordinates.y, this.hitboxRadius, 0, Math.PI * 2);
-        this.ctx.stroke();
     };
     return EnemyPlaneUp;
 }(Enemy));

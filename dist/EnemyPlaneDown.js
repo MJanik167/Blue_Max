@@ -15,6 +15,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import Enemy from "./Enemy.js";
 import Projectile from "./Projectile.js";
+import Shadow from "./Shadow.js";
 var spriteNames = {
     idle: ["idle1.png", "idle2.png"],
     left: ["left1.png", "left2.png"],
@@ -23,7 +24,7 @@ var spriteNames = {
 var EnemyPlaneDown = /** @class */ (function (_super) {
     __extends(EnemyPlaneDown, _super);
     function EnemyPlaneDown(ctx, altitude, createProjectile, positionX) {
-        var _this = _super.call(this, ctx, positionX, 0) || this;
+        var _this = _super.call(this, ctx, positionX, -200) || this;
         _this.altitude = altitude;
         _this.shoot = createProjectile;
         _this.sprites = {
@@ -38,8 +39,11 @@ var EnemyPlaneDown = /** @class */ (function (_super) {
                 return img;
             });
         }
+        _this.shadow = new Shadow(ctx, _this);
+        _this.shadow.texture.setAttribute('src', '/assets/shadow2.png');
         _this.texture = _this.sprites["idle"][0];
         _this.hitboxRadius = 16;
+        _this.speedMultiplier = 1.6;
         return _this;
     }
     EnemyPlaneDown.prototype.render = function (speed) {
@@ -51,11 +55,8 @@ var EnemyPlaneDown = /** @class */ (function (_super) {
             y: this.coordinates.y + speed * this.speedMultiplier * Math.cos(this.isometricAngles.y)
         };
         this.texture = Date.now() % 3 == 0 ? this.sprites["idle"][0] : this.sprites["idle"][1];
+        this.shadow.render(speed * this.speedMultiplier, Math.cos(this.isometricAngles.x), Math.cos(this.isometricAngles.y));
         this.ctx.drawImage(this.texture, this.coordinates.x - this.texture.width * .5, this.coordinates.y - this.texture.height * .5);
-        this.ctx.beginPath();
-        this.ctx.arc(this.coordinates.x, this.coordinates.y, 5, 0, Math.PI * 2);
-        this.ctx.arc(this.coordinates.x, this.coordinates.y, this.hitboxRadius, 0, Math.PI * 2);
-        this.ctx.stroke();
     };
     return EnemyPlaneDown;
 }(Enemy));

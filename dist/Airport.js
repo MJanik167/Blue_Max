@@ -17,7 +17,10 @@ import ObjectRender from "./ObjectRender.js";
 var Airport = /** @class */ (function (_super) {
     __extends(Airport, _super);
     function Airport(ctx, positionX, positionY) {
-        return _super.call(this, ctx, "airport", positionX !== null && positionX !== void 0 ? positionX : 400, positionY !== null && positionY !== void 0 ? positionY : 250) || this;
+        var _this = _super.call(this, ctx, "airport", positionX !== null && positionX !== void 0 ? positionX : 400, positionY !== null && positionY !== void 0 ? positionY : 250) || this;
+        _this.isAirport = true;
+        _this.hitboxRadius = 300;
+        return _this;
     }
     Airport.prototype.render = function (speed) {
         this.coordinates = {
@@ -25,9 +28,6 @@ var Airport = /** @class */ (function (_super) {
             y: this.coordinates.y + speed * Math.cos(this.isometricAngles.y)
         };
         this.ctx.drawImage(this.texture, this.coordinates.x - this.texture.width * .5, this.coordinates.y - this.texture.height * .5);
-        this.ctx.beginPath();
-        this.ctx.arc(this.coordinates.x, this.coordinates.y, 5, 0, Math.PI * 2);
-        this.ctx.stroke();
     };
     return Airport;
 }(ObjectRender));

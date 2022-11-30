@@ -14,22 +14,34 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import ObjectRender from "./ObjectRender.js";
+import Texture from "./Texture.js";
 var Tank = /** @class */ (function (_super) {
     __extends(Tank, _super);
-    function Tank(ctx, positionX) {
+    function Tank(ctx, positionX, addObject) {
         var _this = _super.call(this, ctx, "tank", positionX, -100) || this;
+        _this.leaveRubble = function () {
+            for (var i = 0; i < _this.texture.width / 32; i++) {
+                for (var j = 0; j < _this.texture.height / 32; j++) {
+                    _this.addObject(new Texture(_this.ctx, "rubble", _this.coordinates.x - _this.texture.width * .25 + i * 32, _this.coordinates.y - _this.texture.height * .25 + j * 32, 1));
+                }
+            }
+        };
+        _this.addObject = addObject;
         _this.hitboxRadius = 8;
         return _this;
     }
+    Tank.prototype.destroy = function (array, targets) {
+        var _this = this;
+        var index = array.findIndex(function (e) { return e === _this; });
+        array.splice(index, 1);
+        this.leaveRubble();
+    };
     Tank.prototype.render = function (speed) {
         this.coordinates = {
             x: this.coordinates.x + speed * Math.cos(this.isometricAngles.x),
             y: this.coordinates.y + speed * Math.cos(this.isometricAngles.y)
         };
         this.ctx.drawImage(this.texture, this.coordinates.x - this.texture.width * .5, this.coordinates.y - this.texture.height * .5);
-        this.ctx.beginPath();
-        this.ctx.arc(this.coordinates.x, this.coordinates.y, this.hitboxRadius * 200, 0, Math.PI * 2);
-        this.ctx.stroke();
     };
     return Tank;
 }(ObjectRender));

@@ -18,7 +18,7 @@ var Texture = /** @class */ (function (_super) {
     __extends(Texture, _super);
     function Texture(ctx, texture, positionX, positionY, radius) {
         var _this = _super.call(this, ctx, texture, positionX, positionY) || this;
-        _this.radius = radius;
+        _this.radius = 0;
         return _this;
     }
     Texture.prototype.render = function (speed) {
@@ -27,9 +27,6 @@ var Texture = /** @class */ (function (_super) {
             y: this.coordinates.y + speed * Math.cos(this.isometricAngles.y)
         };
         this.ctx.drawImage(this.texture, this.coordinates.x - this.texture.width * .5, this.coordinates.y - this.texture.height * .5);
-        this.ctx.beginPath();
-        this.ctx.arc(this.coordinates.x, this.coordinates.y, this.radius, 0, Math.PI * 2);
-        this.ctx.stroke();
     };
     return Texture;
 }(ObjectRender));

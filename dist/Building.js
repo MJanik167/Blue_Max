@@ -19,7 +19,8 @@ var textures = {
     1: "buildings/bigGreen",
     2: "buildings/bigPink",
     3: "buildings/smallGray",
-    4: "buildings/smallGreen"
+    4: "buildings/smallGreen",
+    5: "buildings/9.11"
 };
 var Building = /** @class */ (function (_super) {
     __extends(Building, _super);
@@ -28,19 +29,14 @@ var Building = /** @class */ (function (_super) {
         _this.leaveRubble = function () {
             for (var i = 0; i < _this.texture.width / 32; i++) {
                 for (var j = 0; j < _this.texture.height / 32; j++) {
-                    console.log('dziura');
-                    _this.addObject(new Texture(_this.ctx, "dziura", _this.coordinates.x - _this.texture.width * .25 + i * 32, _this.coordinates.y - _this.texture.height * .25 + j * 32, 1));
+                    _this.addObject(new Texture(_this.ctx, "rubble", _this.coordinates.x - _this.texture.width * .25 + i * 32, _this.coordinates.y - _this.texture.height * .25 + j * 32, 1));
+                    document.getElementById("score").innerText = String(parseInt(document.getElementById("score").innerText) + 10);
                 }
             }
         };
         _this.addObject = addObject;
-        var shorterSide = function () {
-            if (_this.texture.width < _this.texture.height) {
-                return _this.texture.width / 2;
-            }
-            return _this.texture.height / 2;
-        };
-        _this.hitboxRadius = shorterSide();
+        _this.altitude = 0;
+        _this.hitboxRadius = 64;
         _this.coordinates = {
             x: _this.coordinates.x,
             y: _this.coordinates.y - _this.texture.height
@@ -49,7 +45,6 @@ var Building = /** @class */ (function (_super) {
     }
     Building.prototype.destroy = function (array, targets) {
         var _this = this;
-        console.log("trafiony");
         var index = array.findIndex(function (e) { return e === _this; });
         array.splice(index, 1);
         if (this.coordinates.y < 480)
@@ -61,10 +56,6 @@ var Building = /** @class */ (function (_super) {
             y: this.coordinates.y + speed * Math.cos(this.isometricAngles.y)
         };
         this.ctx.drawImage(this.texture, this.coordinates.x - this.texture.width * .5, this.coordinates.y - this.texture.height * .5);
-        this.ctx.beginPath();
-        this.ctx.arc(this.coordinates.x, this.coordinates.y, this.hitboxRadius, 0, Math.PI * 2);
-        this.ctx.arc(this.coordinates.x, this.coordinates.y, 2, 0, Math.PI * 2);
-        this.ctx.stroke();
     };
     return Building;
 }(ObjectRender));
