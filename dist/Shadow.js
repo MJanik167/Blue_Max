@@ -30,13 +30,11 @@ var Shadow = /** @class */ (function (_super) {
     Shadow.prototype.render = function (speed, angleX, angleY, objects) {
         var _this = this;
         if (this.main) {
-            console.log(objects);
             objects.forEach(function (e) {
                 if (e.isAirport)
                     if (Math.sqrt(Math.pow((_this.coordinates.x - e.coordinates.x), 2) + Math.pow((_this.coordinates.y - e.coordinates.y), 2)) < _this.hitboxRadius)
                         _this.parent.planeState.overAirport = true;
                     else {
-                        console.log("nie jest");
                         _this.parent.planeState.overAirport = false;
                     }
             });

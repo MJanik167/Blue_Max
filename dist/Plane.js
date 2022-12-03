@@ -40,14 +40,14 @@ var Plane = /** @class */ (function (_super) {
     function Plane(ctx, increaseSpeed, addProjectile, createOject, gameObjects) {
         var _this = _super.call(this, ctx) || this;
         _this.press = function (event) {
-            if (_this.planeState.velocity.now < _this.planeState.velocity.max - 0.1) {
-                if (directions["up"].includes(event.key)) {
-                    _this.planeState.velocity.now += 0.1;
-                    _this.increaseSpeed(_this.planeState.velocity.now);
+            if (_this.planeState.starting) {
+                if (directions["up"].includes(event.key) && _this.planeState.velocity.now >= 2.5) {
+                    _this.planeState.starting = false;
                 }
+                else
+                    _this.planeState.destroyed = true;
                 return;
             }
-            _this.planeState.velocity.now = _this.planeState.velocity.max;
             for (var direction in directions) {
                 if (directions[direction].includes(event.key))
                     if (_this.pressedKeys.includes(direction)) {
@@ -56,11 +56,11 @@ var Plane = /** @class */ (function (_super) {
                     else
                         _this.pressedKeys.push(direction);
             }
-            if (event.key === " " && _this.planeState.velocity.now >= _this.planeState.velocity.max && !_this.planeState.fired) {
+            if (event.key === " " && !_this.planeState.starting && !_this.planeState.fired) {
                 _this.addProjectile(new Projectile(_this.ctx, _this, _this.altitude, _this.coordinates.x + _this.texture.width * .5, _this.coordinates.y));
                 _this.planeState.fired = true;
             }
-            else if ((event.key === "x" || event.key === "X") && _this.planeState.velocity.now >= _this.planeState.velocity.max && _this.planeState.bombs > 0) {
+            else if ((event.key === "x" || event.key === "X") && !_this.planeState.starting && _this.planeState.bombs > 0) {
                 _this.addProjectile(new Bomb(_this.ctx, _this, _this.altitude, _this.createObject, _this.coordinates.x, _this.coordinates.y + _this.texture.height * .5));
                 _this.planeState.lastBomb = Date.now();
                 _this.planeState.bombs--;
@@ -94,6 +94,18 @@ var Plane = /** @class */ (function (_super) {
             document.getElementById("fuel").innerText = text;
         };
         _this.render = function () {
+            if (_this.planeState.starting || _this.planeState.velocity.now < _this.planeState.velocity.max) {
+                console.log("czumpi", _this.planeState.landing, _this.planeState.velocity.now);
+                _this.planeState.velocity.now += 0.017;
+                _this.increaseSpeed(_this.planeState.velocity.now);
+                if (_this.planeState.velocity.now >= _this.planeState.velocity.max && _this.planeState.starting) {
+                    _this.planeState.destroyed = true;
+                    document.getElementById("speed").innerText = "000";
+                }
+            }
+            else {
+                _this.planeState.velocity.now = _this.planeState.velocity.max;
+            }
             if (_this.planeState.landing) {
                 _this.planeState.velocity.now = 0;
                 _this.altitude > 0 ? _this.altitude -= 0.5 : _this.altitude = 0;
@@ -103,7 +115,8 @@ var Plane = /** @class */ (function (_super) {
                     x: _this.coordinates.x <= 260 ? _this.coordinates.x + 1.5 * Math.cos(angles['down']) : _this.coordinates.x,
                     y: _this.coordinates.y <= 420 ? _this.coordinates.y + 1.5 * Math.sin(angles['down']) : _this.coordinates.y
                 };
-                if (_this.planeState.velocity.now === 0) {
+                if (_this.planeState.velocity.now === 0 && _this.planeState.lastBomb != 12) {
+                    _this.planeState.lastBomb = 12;
                     setTimeout(function () {
                         _this.planeState = {
                             velocity: {
@@ -115,12 +128,14 @@ var Plane = /** @class */ (function (_super) {
                             lastBomb: 0,
                             fuel: 300,
                             overAirport: false,
-                            landing: false
+                            landing: false,
+                            starting: true,
+                            destroyed: false
                         };
                         _this.altitude = 0;
-                        _this.planeState.landing = false;
                         _this.displayBombs();
                         _this.displayFuel();
+                        _this.increaseSpeed(0);
                     }, 2000);
                 }
             }
@@ -146,10 +161,10 @@ var Plane = /** @class */ (function (_super) {
                     else if (_this.coordinates.y < 0) {
                         _this.coordinates.y = 0;
                     }
-                    if (e === "up" && _this.planeState.velocity.now === _this.planeState.velocity.max && _this.coordinates.y != 0) {
+                    if (e === "up" && !_this.planeState.starting && _this.coordinates.y != 0) {
                         document.getElementById("altitude").innerText = String(Math.round(_this.altitude += 1.5));
                     }
-                    else if (e === "down" && _this.planeState.velocity.now === _this.planeState.velocity.max && _this.altitude > 0) {
+                    else if (e === "down" && !_this.planeState.starting && _this.altitude > 0) {
                         document.getElementById("altitude").innerText = String(Math.round(_this.altitude -= 1.5));
                     }
                     _this.coordinates = {
@@ -188,7 +203,9 @@ var Plane = /** @class */ (function (_super) {
             lastBomb: 0,
             fuel: 300,
             overAirport: false,
-            landing: false
+            landing: false,
+            starting: true,
+            destroyed: false
         };
         _this.coordinates = {
             x: 260,

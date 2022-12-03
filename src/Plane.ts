@@ -38,7 +38,9 @@ interface planeState {
   bombs: number,
   fuel: number,
   overAirport: boolean,
-  landing: boolean
+  landing: boolean,
+  starting: boolean,
+  destroyed: boolean
 }
 
 
@@ -74,7 +76,9 @@ export default class Plane extends ObjectRender {
       lastBomb: 0,
       fuel: 300,
       overAirport: false,
-      landing: false
+      landing: false,
+      starting: true,
+      destroyed: false
     }
 
     this.coordinates = {
@@ -106,24 +110,24 @@ export default class Plane extends ObjectRender {
   }
 
   press = (event: KeyboardEvent) => {
-    if (this.planeState.velocity.now < this.planeState.velocity.max - 0.1) {
-      if (directions["up"].includes(event.key)) {
-        this.planeState.velocity.now += 0.1
-        this.increaseSpeed(this.planeState.velocity.now)
+    if (this.planeState.starting) {
+      if (directions["up"].includes(event.key) && this.planeState.velocity.now >= 2.5) {
+        this.planeState.starting = false
       }
+      else
+        this.planeState.destroyed = true
       return
     }
-    this.planeState.velocity.now = this.planeState.velocity.max
     for (let direction in directions) {
       if (directions[direction as Directions].includes(event.key))
         if (this.pressedKeys.includes(direction as Directions)) { return }
         else this.pressedKeys.push(direction as Directions)
     }
-    if (event.key === " " && this.planeState.velocity.now >= this.planeState.velocity.max && !this.planeState.fired) {
+    if (event.key === " " && !this.planeState.starting && !this.planeState.fired) {
       this.addProjectile(new Projectile(this.ctx, this, this.altitude, this.coordinates.x + this.texture.width * .5, this.coordinates.y))
       this.planeState.fired = true
     }
-    else if ((event.key === "x" || event.key === "X") && this.planeState.velocity.now >= this.planeState.velocity.max && this.planeState.bombs > 0) {
+    else if ((event.key === "x" || event.key === "X") && !this.planeState.starting && this.planeState.bombs > 0) {
       this.addProjectile(new Bomb(this.ctx, this, this.altitude, this.createObject, this.coordinates.x, this.coordinates.y + this.texture.height * .5))
       this.planeState.lastBomb = Date.now()
       this.planeState.bombs--
@@ -150,13 +154,24 @@ export default class Plane extends ObjectRender {
   }
 
   displayFuel = () => {
-    let text: string = String(Math.round(this.planeState.fuel))
+    let text = String(Math.round(this.planeState.fuel))
     if (this.planeState.fuel < 100) { text = "0" + String(Math.round(this.planeState.fuel)) }
     else if (this.planeState.fuel < 10) { text = "00" + String(Math.round(this.planeState.fuel)) }
     document.getElementById("fuel")!.innerText = text
   }
 
   render = () => {
+    if (this.planeState.starting || this.planeState.velocity.now < this.planeState.velocity.max) {
+      console.log("czumpi", this.planeState.landing, this.planeState.velocity.now)
+      this.planeState.velocity.now += 0.017
+      this.increaseSpeed(this.planeState.velocity.now)
+      if (this.planeState.velocity.now >= this.planeState.velocity.max && this.planeState.starting) {
+        this.planeState.destroyed = true
+        document.getElementById("speed")!.innerText = "000"
+      }
+    }
+    else { this.planeState.velocity.now = this.planeState.velocity.max }
+
     if (this.planeState.landing) {
       this.planeState.velocity.now = 0
       this.altitude > 0 ? this.altitude -= 0.5 : this.altitude = 0
@@ -166,7 +181,8 @@ export default class Plane extends ObjectRender {
         x: this.coordinates.x <= 260 ? this.coordinates.x + 1.5 * Math.cos(angles['down' as Directions]) : this.coordinates.x,
         y: this.coordinates.y <= 420 ? this.coordinates.y + 1.5 * Math.sin(angles['down' as Directions]) : this.coordinates.y
       }
-      if (this.planeState.velocity.now === 0) {
+      if (this.planeState.velocity.now === 0 && this.planeState.lastBomb != 12) {
+        this.planeState.lastBomb = 12
         setTimeout(() => {
           this.planeState = {
             velocity: {
@@ -178,12 +194,14 @@ export default class Plane extends ObjectRender {
             lastBomb: 0,
             fuel: 300,
             overAirport: false,
-            landing: false
+            landing: false,
+            starting: true,
+            destroyed: false
           }
           this.altitude = 0
-          this.planeState.landing = false
           this.displayBombs()
           this.displayFuel()
+          this.increaseSpeed(0)
         }, 2000);
       }
     }
@@ -191,7 +209,6 @@ export default class Plane extends ObjectRender {
 
     if (this.pressedKeys.length != 0) {
       this.pressedKeys.forEach(e => {
-
         if (e === "down" && this.altitude <= 25) {
           if (!this.planeState.overAirport) { return }
           else { this.planeState.landing = true }
@@ -200,8 +217,8 @@ export default class Plane extends ObjectRender {
         else if (this.coordinates.x > 640 - this.texture.width) { this.coordinates.x = 640 - this.texture.width }
         if (this.coordinates.y > 480 - this.texture.height) { this.coordinates.y = 480 - this.texture.height }
         else if (this.coordinates.y < 0) { this.coordinates.y = 0 }
-        if (e === "up" && this.planeState.velocity.now === this.planeState.velocity.max && this.coordinates.y != 0) { document.getElementById("altitude")!.innerText = String(Math.round(this.altitude += 1.5)) }
-        else if (e === "down" && this.planeState.velocity.now === this.planeState.velocity.max && this.altitude > 0) { document.getElementById("altitude")!.innerText = String(Math.round(this.altitude -= 1.5)) }
+        if (e === "up" && !this.planeState.starting && this.coordinates.y != 0) { document.getElementById("altitude")!.innerText = String(Math.round(this.altitude += 1.5)) }
+        else if (e === "down" && !this.planeState.starting && this.altitude > 0) { document.getElementById("altitude")!.innerText = String(Math.round(this.altitude -= 1.5)) }
         this.coordinates = {
           x: this.coordinates.x + this.planeState.velocity.now * Math.cos(angles[e as Directions]),
           y: this.coordinates.y + this.planeState.velocity.now * Math.sin(angles[e as Directions])

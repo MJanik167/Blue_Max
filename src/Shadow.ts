@@ -15,13 +15,11 @@ export default class Shadow extends ObjectRender {
 
   render(speed: number, angleX?: number, angleY?: number, objects?: ObjectRender[]): void {
     if (this.main) {
-      console.log(objects)
       objects!.forEach(e => {
         if (e.isAirport)
           if (Math.sqrt((this.coordinates.x - e.coordinates.x) ** 2 + (this.coordinates.y - e.coordinates.y) ** 2) < this.hitboxRadius)
             (this.parent as Plane).planeState.overAirport = true
           else {
-            console.log("nie jest");
             (this.parent as Plane).planeState.overAirport = false
           }
       })
