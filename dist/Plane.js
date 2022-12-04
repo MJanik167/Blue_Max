@@ -40,12 +40,16 @@ var Plane = /** @class */ (function (_super) {
     function Plane(ctx, increaseSpeed, addProjectile, createOject, gameObjects) {
         var _this = _super.call(this, ctx) || this;
         _this.press = function (event) {
+            if (!_this.planeState.starting && _this.planeState.velocity.now === 0) {
+                return;
+            }
             if (_this.planeState.starting) {
                 if (directions["up"].includes(event.key) && _this.planeState.velocity.now >= 2.5) {
                     _this.planeState.starting = false;
                 }
-                else
+                else {
                     _this.planeState.destroyed = true;
+                }
                 return;
             }
             for (var direction in directions) {
@@ -94,8 +98,9 @@ var Plane = /** @class */ (function (_super) {
             document.getElementById("fuel").innerText = text;
         };
         _this.render = function () {
-            if (_this.planeState.starting || _this.planeState.velocity.now < _this.planeState.velocity.max) {
-                console.log("czumpi", _this.planeState.landing, _this.planeState.velocity.now);
+            if (_this.planeState.destroyed)
+                return;
+            if (_this.planeState.starting || (_this.planeState.velocity.now < _this.planeState.velocity.max && _this.planeState.velocity.now > 0)) {
                 _this.planeState.velocity.now += 0.017;
                 _this.increaseSpeed(_this.planeState.velocity.now);
                 if (_this.planeState.velocity.now >= _this.planeState.velocity.max && _this.planeState.starting) {
@@ -103,7 +108,7 @@ var Plane = /** @class */ (function (_super) {
                     document.getElementById("speed").innerText = "000";
                 }
             }
-            else {
+            else if (_this.planeState.starting) {
                 _this.planeState.velocity.now = _this.planeState.velocity.max;
             }
             if (_this.planeState.landing) {
@@ -204,7 +209,7 @@ var Plane = /** @class */ (function (_super) {
             fuel: 300,
             overAirport: false,
             landing: false,
-            starting: true,
+            starting: false,
             destroyed: false
         };
         _this.coordinates = {

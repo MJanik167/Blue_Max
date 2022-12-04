@@ -77,7 +77,7 @@ export default class Plane extends ObjectRender {
       fuel: 300,
       overAirport: false,
       landing: false,
-      starting: true,
+      starting: false,
       destroyed: false
     }
 
@@ -110,13 +110,14 @@ export default class Plane extends ObjectRender {
   }
 
   press = (event: KeyboardEvent) => {
+    if (!this.planeState.starting && this.planeState.velocity.now === 0) { return }
     if (this.planeState.starting) {
       if (directions["up"].includes(event.key) && this.planeState.velocity.now >= 2.5) {
         this.planeState.starting = false
       }
-      else
+      else {
         this.planeState.destroyed = true
-      return
+      } return
     }
     for (let direction in directions) {
       if (directions[direction as Directions].includes(event.key))
@@ -161,8 +162,8 @@ export default class Plane extends ObjectRender {
   }
 
   render = () => {
-    if (this.planeState.starting || this.planeState.velocity.now < this.planeState.velocity.max) {
-      console.log("czumpi", this.planeState.landing, this.planeState.velocity.now)
+    if (this.planeState.destroyed) return
+    if (this.planeState.starting || (this.planeState.velocity.now < this.planeState.velocity.max && this.planeState.velocity.now > 0)) {
       this.planeState.velocity.now += 0.017
       this.increaseSpeed(this.planeState.velocity.now)
       if (this.planeState.velocity.now >= this.planeState.velocity.max && this.planeState.starting) {
@@ -170,7 +171,7 @@ export default class Plane extends ObjectRender {
         document.getElementById("speed")!.innerText = "000"
       }
     }
-    else { this.planeState.velocity.now = this.planeState.velocity.max }
+    else if (this.planeState.starting) { this.planeState.velocity.now = this.planeState.velocity.max }
 
     if (this.planeState.landing) {
       this.planeState.velocity.now = 0

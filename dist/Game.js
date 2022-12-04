@@ -78,6 +78,13 @@ var Game = /** @class */ (function () {
             _this.speed.now = 0;
             _this.instances.entities = [];
             _this.instances.projectiles = [];
+            _this.player = undefined;
+            // setTimeout(() => {
+            //     this.active = false
+            // }, 20);
+        };
+        this.start = function () {
+            _this.player.planeState.starting = true;
         };
         this.frame = function () { return __awaiter(_this, void 0, void 0, function () {
             var _loop_2, this_1, instance;
@@ -169,11 +176,13 @@ var Game = /** @class */ (function () {
                         }
                     }
                 }
-                requestAnimationFrame(this.frame);
+                if (this.active)
+                    requestAnimationFrame(this.frame);
                 return [2 /*return*/];
             });
         }); };
         this.map = 0;
+        this.active = true;
         this.gravity = gravity;
         this.canvas = canvas;
         this.speed = {

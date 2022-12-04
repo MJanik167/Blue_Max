@@ -51,11 +51,13 @@ export default class Game {
     ctx: CanvasRenderingContext2D
     instances: instances
     background: background
-    player: Plane
+    player: Plane | undefined
     map: number
     gravity: boolean
+    active: boolean
     constructor(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, gravity: boolean) {
         this.map = 0
+        this.active = true
         this.gravity = gravity
         this.canvas = canvas
         this.speed = {
@@ -88,6 +90,7 @@ export default class Game {
         this.frame()
     }
 
+
     increaseSpeed = (speed: number) => {
         if (speed < 5) {
             document.getElementById("speed")!.innerHTML = String(Math.round((speed >= 0 ? speed * 100 : 0) / 2.5))
@@ -111,14 +114,22 @@ export default class Game {
     }
 
     gameOver = () => {
-        this.player.destroy(this.instances.entities)
+        (this.player as Plane).destroy(this.instances.entities)
         this.speed.now = 0
         this.instances.entities = []
         this.instances.projectiles = []
+        this.player = undefined
+        // setTimeout(() => {
+        //     this.active = false
+        // }, 20);
+
+    }
+
+    start = () => {
+        (this.player as Plane).planeState.starting = true
     }
 
     frame = async () => {
-
         this.ctx.drawImage(
             this.background.src,
             this.background.x -= Math.cos(angles.x) * this.speed.now, this.background.y -= Math.cos(angles.y) * this.speed.now, //pozycja wyciętego fragment na oryginalnym obrazku 
@@ -150,7 +161,7 @@ export default class Game {
                             if (this.instances[instance as instance].includes(target)) {
                                 target.destroy(this.instances[instance as instance], this.instances.entities)
                                 document.getElementById("score")!.innerText = String(parseInt(document.getElementById("score")!.innerText) + 10)
-                                if (target === this.player) { this.gameOver() }
+                                if (target === (this.player as Plane)) { this.gameOver() }
                                 if (e !== target)
                                     e.destroy(this.instances.projectiles, this.instances.entities)
                             }
@@ -164,8 +175,8 @@ export default class Game {
         }
 
         if (this.speed.now >= this.speed.max) {
-            if (this.player.planeState.destroyed) {
-                this.player.destroy(this.instances.entities)
+            if ((this.player as Plane).planeState.destroyed) {
+                (this.player as Plane).destroy(this.instances.entities)
                 this.gameOver()
             }
             if (this.map == 1) {
@@ -207,6 +218,6 @@ export default class Game {
             }
         }
 
-        requestAnimationFrame(this.frame)
+        if (this.active) requestAnimationFrame(this.frame)
     }
 }

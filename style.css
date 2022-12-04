@@ -4,6 +4,12 @@ body {
   height: 100%;
 }
 
+@font-face {
+  font-family: bit;
+  src: url('assets/font.ttf');
+}
+
+
 body {
   position: relative;
   background-color: black;
@@ -20,6 +26,29 @@ body {
   align-self: flex-end;
 }
 
+#options {
+  width: 640px;
+  height: 480px;
+  visibility: hidden;
+  border: 1px solid white;
+  grid-area: 1/2;
+  align-self: flex-end;
+  background-color: blue;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#options>* {
+  flex: 1;
+  align-self: center;
+  align-content: center;
+  font-family: bit;
+  color: white;
+  font-size: 30px;
+}
+
 #container {
   margin-top: 2vh;
   display: flex;
@@ -29,10 +58,6 @@ body {
   grid-area: 2 /2;
 }
 
-@font-face {
-  font-family: bit;
-  src: url('assets/font.ttf');
-}
 
 #container>div>div>h1 {
   color: white;
