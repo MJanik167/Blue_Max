@@ -74,7 +74,8 @@ var Game = /** @class */ (function () {
             }
         };
         this.gameOver = function () {
-            _this.player.destroy(_this.instances.entities);
+            if (_this.player != undefined)
+                _this.player.destroy(_this.instances.entities);
             _this.speed.now = 0;
             _this.instances.entities = [];
             _this.instances.projectiles = [];

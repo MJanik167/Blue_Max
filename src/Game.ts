@@ -114,7 +114,7 @@ export default class Game {
     }
 
     gameOver = () => {
-        (this.player as Plane).destroy(this.instances.entities)
+        if (this.player != undefined) (this.player as Plane).destroy(this.instances.entities)
         this.speed.now = 0
         this.instances.entities = []
         this.instances.projectiles = []

@@ -39,7 +39,10 @@ export default class EnemyPlaneDown extends Enemy {
 
 
     render(speed: number): void {
-        if (Date.now() % 75 === 0) { this.shoot(new Projectile(this.ctx, this, this.altitude, this.coordinates.x, this.coordinates.y, this.isometricAngles.x + Math.PI, this.isometricAngles.y + Math.PI)) }
+        if (Date.now() % 35 === 0) {
+            console.log("simea")
+            this.shoot(new Projectile(this.ctx, this, this.altitude, this.coordinates.x, this.coordinates.y, this.isometricAngles.x + Math.PI, this.isometricAngles.y + Math.PI))
+        }
         this.coordinates = {
             x: this.coordinates.x + speed * this.speedMultiplier * Math.cos(this.isometricAngles.x),
             y: this.coordinates.y + speed * this.speedMultiplier * Math.cos(this.isometricAngles.y)
