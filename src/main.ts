@@ -27,7 +27,6 @@ const menu = (event: KeyboardEvent) => {
 
 const pause = (event: KeyboardEvent) => {
   if (event.key === "F2") {
-    console.log('czumpi')
     optionsView.style.visibility = "visible"
     game.gameOver()
     window.removeEventListener("keydown", pause)

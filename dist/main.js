@@ -21,7 +21,6 @@ var menu = function (event) {
 };
 var pause = function (event) {
     if (event.key === "F2") {
-        console.log('czumpi');
         optionsView.style.visibility = "visible";
         game.gameOver();
         window.removeEventListener("keydown", pause);

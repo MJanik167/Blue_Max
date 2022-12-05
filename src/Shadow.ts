@@ -31,6 +31,13 @@ export default class Shadow extends ObjectRender {
     this.ctx.drawImage(this.texture, this.coordinates.x - this.texture.width * .5, this.coordinates.y - this.texture.height * .5)
   }
 
+  getAltitude = (): number => {
+    let distance = Math.sqrt((this.coordinates.x - this.parent.coordinates.x) ** 2 + (this.coordinates.y - this.parent.coordinates.y) ** 2)
+    if (this.parent.coordinates.y >= this.coordinates.y)
+      return 0
+    else return distance - 5
+  }
+
   destroy(array: ObjectRender[], targets?: ObjectRender[] | undefined): void {
     let index = array.findIndex(e => e === this)
     array.splice(index, 1)

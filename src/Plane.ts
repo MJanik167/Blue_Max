@@ -60,7 +60,7 @@ export default class Plane extends ObjectRender {
     gameObjects: ObjectRender[]
   ) {
     super(ctx)
-
+    this.altitude = 0
     this.pressedKeys = []
     this.gameObjects = gameObjects
     this.increaseSpeed = increaseSpeed
@@ -175,7 +175,7 @@ export default class Plane extends ObjectRender {
 
     if (this.planeState.landing) {
       this.planeState.velocity.now = 0
-      this.altitude > 0 ? this.altitude -= 0.5 : this.altitude = 0
+      this.altitude > 0 ? this.altitude -= 0.5 : this.altitude = 0.1
       document.getElementById("altitude")!.innerText = String(this.altitude > 10 ? Math.round(this.altitude) : 0 + String(Math.round(this.altitude)))
       this.increaseSpeed(-0.5)
       this.coordinates = {
@@ -207,23 +207,28 @@ export default class Plane extends ObjectRender {
       }
     }
 
+    if (this.planeState.velocity.now >= this.planeState.velocity.max && !this.planeState.overAirport && this.altitude <= 0) { this.planeState.destroyed = true }
 
-    if (this.pressedKeys.length != 0) {
+    console.log(this.planeState.overAirport);
+    if (this.pressedKeys.length != 20) {
       this.pressedKeys.forEach(e => {
-        if (e === "down" && this.altitude <= 25) {
-          if (!this.planeState.overAirport) { return }
-          else { this.planeState.landing = true }
+        if (e === "down" && this.altitude <= 0.5) {
+          if (this.planeState.overAirport) { this.planeState.landing = true }
+          else { return this.planeState.destroyed = true }
         }
         if (this.coordinates.x < 0) { this.coordinates.x = 0 }
         else if (this.coordinates.x > 640 - this.texture.width) { this.coordinates.x = 640 - this.texture.width }
         if (this.coordinates.y > 480 - this.texture.height) { this.coordinates.y = 480 - this.texture.height }
         else if (this.coordinates.y < 0) { this.coordinates.y = 0 }
-        if (e === "up" && !this.planeState.starting && this.coordinates.y != 0) { document.getElementById("altitude")!.innerText = String(Math.round(this.altitude += 1.5)) }
-        else if (e === "down" && !this.planeState.starting && this.altitude > 0) { document.getElementById("altitude")!.innerText = String(Math.round(this.altitude -= 1.5)) }
+
+        // if (e === "up" && this.coordinates.y != 0) { this.altitude += 1.5 }
+        // else if (e === "down" && this.altitude > 0) { this.altitude -= 1.5 }
         this.coordinates = {
           x: this.coordinates.x + this.planeState.velocity.now * Math.cos(angles[e as Directions]),
           y: this.coordinates.y + this.planeState.velocity.now * Math.sin(angles[e as Directions])
         }
+        this.altitude = this.shadow.getAltitude() / 3
+        document.getElementById("altitude")!.innerText = String(Math.round(this.altitude < 0 ? 0 : this.altitude))
       })
     }
     if (this.planeState.velocity.now > 0) {
