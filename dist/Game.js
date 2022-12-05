@@ -89,7 +89,8 @@ var Game = /** @class */ (function () {
         this.frame = function () { return __awaiter(_this, void 0, void 0, function () {
             var _loop_2, this_1, instance;
             var _this = this;
-            return __generator(this, function (_a) {
+            var _a;
+            return __generator(this, function (_b) {
                 this.ctx.drawImage(this.background.src, this.background.x -= Math.cos(angles.x) * this.speed.now, this.background.y -= Math.cos(angles.y) * this.speed.now, //pozycja wyciętego fragment na oryginalnym obrazku 
                 this.canvas.width, this.canvas.height, //wielkość wyciętego fragmentu
                 0, 0, // pozycja obrazka na canvasie
@@ -97,6 +98,8 @@ var Game = /** @class */ (function () {
                 if (Date.now() % 154 === 0 && this.speed.now >= this.speed.max && !this.instances.objects.find(function (e) { return e.isAirport === true; })) {
                     this.instances.entities.push(Math.floor(Math.random() * 2) === 1 ? new EnemyPlaneDown(this.ctx, Math.floor((Math.random() * 40) + 30), function (e) { _this.instances.projectiles.push(e); }, Math.floor(Math.random() * this.canvas.width)) : new EnemyPlaneUp(this.ctx, Math.floor((Math.random() * 70) + 40), function (e) { _this.instances.projectiles.push(e); }, Math.floor(Math.random() * this.canvas.width)));
                 }
+                if ((_a = this.player) === null || _a === void 0 ? void 0 : _a.planeState.destroyed)
+                    this.gameOver();
                 if (this.background.y < 0) {
                     this.map = Math.floor(Math.random() * 2);
                     this.background.y = this.background.src.height - this.canvas.height;
@@ -188,12 +191,6 @@ var Game = /** @class */ (function () {
         this.speed = {
             now: 0,
             max: 2
-        };
-        this.playerInfo = {
-            score: 0,
-            fuel: 300,
-            bombs: 0,
-            altitude: 0
         };
         var img = document.createElement("img");
         img.setAttribute("src", "../assets/testb.png");

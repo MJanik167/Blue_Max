@@ -18,6 +18,13 @@ var Shadow = /** @class */ (function (_super) {
     __extends(Shadow, _super);
     function Shadow(ctx, parent, main) {
         var _this = _super.call(this, ctx, "shadow1", parent.coordinates.x, parent.coordinates.y) || this;
+        _this.getAltitude = function () {
+            var distance = Math.sqrt(Math.pow((_this.coordinates.x - _this.parent.coordinates.x), 2) + Math.pow((_this.coordinates.y - _this.parent.coordinates.y), 2));
+            if (_this.parent.coordinates.y >= _this.coordinates.y)
+                return 0;
+            else
+                return distance - 5;
+        };
         _this.parent = parent;
         _this.main = main;
         _this.hitboxRadius = 300;

@@ -23,13 +23,6 @@ interface speed {
     max: number
 }
 
-interface playerInfo {
-    score: number,
-    fuel: number,
-    bombs: number,
-    altitude: number
-}
-
 type instance = "entities" | "objects" | "projectiles"
 
 interface instances {
@@ -46,7 +39,6 @@ interface background {
 
 export default class Game {
     speed: speed
-    playerInfo: playerInfo
     canvas: HTMLCanvasElement
     ctx: CanvasRenderingContext2D
     instances: instances
@@ -63,12 +55,6 @@ export default class Game {
         this.speed = {
             now: 0,
             max: 2
-        }
-        this.playerInfo = {
-            score: 0,
-            fuel: 300,
-            bombs: 0,
-            altitude: 0
         }
         let img = document.createElement("img")
         img.setAttribute("src", "../assets/testb.png")
@@ -141,6 +127,9 @@ export default class Game {
         if (Date.now() % 154 === 0 && this.speed.now >= this.speed.max && !this.instances.objects.find(e => e.isAirport === true)) {
             this.instances.entities.push(Math.floor(Math.random() * 2) === 1 ? new EnemyPlaneDown(this.ctx, Math.floor((Math.random() * 40) + 30), (e: Projectile): void => { this.instances.projectiles.push(e) }, Math.floor(Math.random() * this.canvas.width)) : new EnemyPlaneUp(this.ctx, Math.floor((Math.random() * 70) + 40), (e: Projectile): void => { this.instances.projectiles.push(e) }, Math.floor(Math.random() * this.canvas.width)))
         }
+
+        if (this.player?.planeState.destroyed)
+            this.gameOver()
 
         if (this.background.y < 0) {
             this.map = Math.floor(Math.random() * 2)

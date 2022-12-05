@@ -41,7 +41,10 @@ var Bomb = /** @class */ (function (_super) {
                     inBlast.push(e);
             });
             inBlast.forEach(function (element) {
-                element.destroy(entities);
+                if (element === _this.origin)
+                    element.planeState.destroyed = true;
+                else
+                    element.destroy(entities);
                 document.getElementById("score").innerText = String(parseInt(document.getElementById("score").innerText) + 10);
             });
         };

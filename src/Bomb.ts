@@ -1,4 +1,5 @@
 import ObjectRender from "./ObjectRender.js";
+import Plane from "./Plane.js";
 import Projectile from "./Projectile.js";
 import Texture from "./Texture.js";
 
@@ -45,7 +46,10 @@ export default class Bomb extends Projectile {
                 inBlast.push(e)
         })
         inBlast.forEach(element => {
-            element.destroy(entities)
+            if (element === this.origin)
+                (element as Plane).planeState.destroyed = true
+            else
+                element.destroy(entities)
             document.getElementById("score")!.innerText = String(parseInt(document.getElementById("score")!.innerText) + 10)
         });
     }
