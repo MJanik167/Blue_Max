@@ -23,6 +23,7 @@ const menu = (event: KeyboardEvent) => {
     document.getElementById("altitude")!.innerText = "000"
     document.getElementById("score")!.innerText = "0000"
     optionsView.style.visibility = "hidden"
+    game.active = false
     game = new Game(canvas, ctx, options.gravity)
     window.addEventListener("keydown", pause)
   } else if (event.key == "ArrowUp") {

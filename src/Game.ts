@@ -207,9 +207,11 @@ export default class Game {
             }
 
         }
-        if (this.gravity && this.player!.planeState.velocity.now > 4) {
-            this.player!.coordinates.y += 0.3
-            console.log("czimpi")
+        if (this.player) {
+            if (this.gravity && this.player!.planeState.velocity.now > 4) {
+                this.player!.coordinates.y += 0.3
+                console.log("czimpi")
+            }
         }
         if (this.active) requestAnimationFrame(this.frame)
     }
