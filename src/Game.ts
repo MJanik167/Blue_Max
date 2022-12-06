@@ -205,8 +205,12 @@ export default class Game {
                     this.instances.entities.unshift(new Building(this.ctx, 1, 800, (e: Texture) => (this.instances.objects.push(e))))
                 }
             }
-        }
 
+        }
+        if (this.gravity && this.player!.planeState.velocity.now > 4) {
+            this.player!.coordinates.y += 0.3
+            console.log("czimpi")
+        }
         if (this.active) requestAnimationFrame(this.frame)
     }
 }

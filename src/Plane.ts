@@ -208,7 +208,8 @@ export default class Plane extends ObjectRender {
     }
 
     if (this.planeState.velocity.now >= this.planeState.velocity.max && !this.planeState.overAirport && this.altitude <= 0) { this.planeState.destroyed = true }
-
+    this.altitude = this.shadow.getAltitude() / 3
+    document.getElementById("altitude")!.innerText = String(Math.round(this.altitude < 0 ? 0 : this.altitude))
     console.log(this.planeState.overAirport);
     if (this.pressedKeys.length != 20) {
       this.pressedKeys.forEach(e => {
@@ -227,8 +228,7 @@ export default class Plane extends ObjectRender {
           x: this.coordinates.x + this.planeState.velocity.now * Math.cos(angles[e as Directions]),
           y: this.coordinates.y + this.planeState.velocity.now * Math.sin(angles[e as Directions])
         }
-        this.altitude = this.shadow.getAltitude() / 3
-        document.getElementById("altitude")!.innerText = String(Math.round(this.altitude < 0 ? 0 : this.altitude))
+
       })
     }
     if (this.planeState.velocity.now > 0) {

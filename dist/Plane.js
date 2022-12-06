@@ -147,6 +147,8 @@ var Plane = /** @class */ (function (_super) {
             if (_this.planeState.velocity.now >= _this.planeState.velocity.max && !_this.planeState.overAirport && _this.altitude <= 0) {
                 _this.planeState.destroyed = true;
             }
+            _this.altitude = _this.shadow.getAltitude() / 3;
+            document.getElementById("altitude").innerText = String(Math.round(_this.altitude < 0 ? 0 : _this.altitude));
             console.log(_this.planeState.overAirport);
             if (_this.pressedKeys.length != 20) {
                 _this.pressedKeys.forEach(function (e) {
@@ -176,8 +178,6 @@ var Plane = /** @class */ (function (_super) {
                         x: _this.coordinates.x + _this.planeState.velocity.now * Math.cos(angles[e]),
                         y: _this.coordinates.y + _this.planeState.velocity.now * Math.sin(angles[e])
                     };
-                    _this.altitude = _this.shadow.getAltitude() / 3;
-                    document.getElementById("altitude").innerText = String(Math.round(_this.altitude < 0 ? 0 : _this.altitude));
                 });
             }
             if (_this.planeState.velocity.now > 0) {
