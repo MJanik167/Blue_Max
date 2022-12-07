@@ -136,6 +136,16 @@ export default class Plane extends ObjectRender {
     }
   }
 
+  checkForEnemies = (array: ObjectRender[]): boolean => {
+    let a = false
+    array.forEach(element => {
+      if (element != this && element.altitude >= 30 && this.altitude >= element.altitude - 5 && this.altitude <= element.altitude + 5) {
+        a = true
+      }
+    });
+    return a
+  }
+
   release = (event: KeyboardEvent) => {
     for (let direction in directions) {
       if (directions[direction as Directions].includes(event.key))
@@ -173,6 +183,8 @@ export default class Plane extends ObjectRender {
     }
     else if (this.planeState.starting) { this.planeState.velocity.now = this.planeState.velocity.max }
 
+    if (this.altitude < 20 && this.planeState.velocity.now >= this.planeState.velocity.max && Date.now() % 2 == 0) document.getElementById("container")!.style.backgroundColor = "yellow"
+    else document.getElementById("container")!.style.backgroundColor = "black"
     if (this.planeState.landing) {
       this.planeState.velocity.now = 0
       this.altitude > 0 ? this.altitude -= 0.5 : this.altitude = 0.1
@@ -210,7 +222,6 @@ export default class Plane extends ObjectRender {
     if (this.planeState.velocity.now >= this.planeState.velocity.max && !this.planeState.overAirport && this.altitude <= 0) { this.planeState.destroyed = true }
     this.altitude = this.shadow.getAltitude() / 3
     document.getElementById("altitude")!.innerText = String(Math.round(this.altitude < 0 ? 0 : this.altitude))
-    console.log(this.planeState.overAirport);
     if (this.pressedKeys.length != 20) {
       this.pressedKeys.forEach(e => {
         if (e === "down" && this.altitude <= 0.5) {

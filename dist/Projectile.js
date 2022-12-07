@@ -23,7 +23,7 @@ var Projectile = /** @class */ (function (_super) {
             entities.forEach(function (e) {
                 if (Math.sqrt(Math.pow(_this.coordinates.x - e.coordinates.x, 2) + Math.pow(_this.coordinates.y - e.coordinates.y, 2)) < _this.hitboxRadius + e.hitboxRadius
                     && e !== _this.origin
-                    && (_this.altitude <= e.altitude + 15 && _this.altitude >= e.altitude - 15))
+                    && (_this.altitude <= e.altitude + 5 && _this.altitude >= e.altitude - 5))
                     object = e;
             });
             return object;

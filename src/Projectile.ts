@@ -24,7 +24,7 @@ export default class Projectile extends ObjectRender {
         entities.forEach(e => {
             if (Math.sqrt(Math.pow(this.coordinates.x - e.coordinates.x, 2) + Math.pow(this.coordinates.y - e.coordinates.y, 2)) < this.hitboxRadius + e.hitboxRadius
                 && e !== this.origin
-                && (this.altitude <= e.altitude + 15 && this.altitude >= e.altitude - 15)
+                && (this.altitude <= e.altitude + 5 && this.altitude >= e.altitude - 5)
             )
                 object = e
         })

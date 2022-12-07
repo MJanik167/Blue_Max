@@ -123,6 +123,9 @@ export default class Game {
             0, 0, // pozycja obrazka na canvasie
             this.canvas.width, this.canvas.height
         )
+        if (this.player?.checkForEnemies(this.instances.entities)) {
+            document.getElementById("container")!.style.backgroundColor = "blue"
+        } else { document.getElementById("container")!.style.backgroundColor = "black" }
 
         if (Date.now() % 154 === 0 && this.speed.now >= this.speed.max && !this.instances.objects.find(e => e.isAirport === true)) {
             this.instances.entities.push(Math.floor(Math.random() * 2) === 1 ? new EnemyPlaneDown(this.ctx, Math.floor((Math.random() * 40) + 30), (e: Projectile): void => { this.instances.projectiles.push(e) }, Math.floor(Math.random() * this.canvas.width)) : new EnemyPlaneUp(this.ctx, Math.floor((Math.random() * 70) + 40), (e: Projectile): void => { this.instances.projectiles.push(e) }, Math.floor(Math.random() * this.canvas.width)))
@@ -137,7 +140,7 @@ export default class Game {
             this.background.x = this.map === 0 ? this.canvas.width : 0
         }
 
-        if (this.background.y < 510 && !this.instances.objects.find(e => e.isAirport === true)) {//&& parseInt(document.getElementById('fuel')!.innerText) < 200) {
+        if (this.background.y < 510 && !this.instances.objects.find(e => e.isAirport === true) && this.player!.planeState.fuel < 180) {//&& parseInt(document.getElementById('fuel')!.innerText) < 200) {
             this.instances.objects.push(new Airport(this.ctx, 800, -275));
         }
 
@@ -210,7 +213,6 @@ export default class Game {
         if (this.player) {
             if (this.gravity && this.player!.planeState.velocity.now > 4) {
                 this.player!.coordinates.y += 0.3
-                console.log("czimpi")
             }
         }
         if (this.active) requestAnimationFrame(this.frame)

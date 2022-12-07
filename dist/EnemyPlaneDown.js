@@ -48,7 +48,6 @@ var EnemyPlaneDown = /** @class */ (function (_super) {
     }
     EnemyPlaneDown.prototype.render = function (speed) {
         if (Date.now() % 35 === 0) {
-            console.log("simea");
             this.shoot(new Projectile(this.ctx, this, this.altitude, this.coordinates.x, this.coordinates.y, this.isometricAngles.x + Math.PI, this.isometricAngles.y + Math.PI));
         }
         this.coordinates = {

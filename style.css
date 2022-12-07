@@ -56,6 +56,7 @@ body {
   justify-content: start;
   align-items: flex-start;
   grid-area: 2 /2;
+  height: fit-content;
 }
 
 
