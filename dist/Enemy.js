@@ -19,6 +19,7 @@ var Enemy = /** @class */ (function (_super) {
     function Enemy(ctx, positionX, positionY) {
         var _this = _super.call(this, ctx, undefined, positionX, positionY) || this;
         _this.speedMultiplier = 1.3;
+        _this.type = "down";
         _this.hitboxRadius = 30;
         _this.sprites = {
             idle: [],

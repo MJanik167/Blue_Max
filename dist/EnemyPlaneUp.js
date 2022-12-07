@@ -25,6 +25,7 @@ var EnemyPlaneUp = /** @class */ (function (_super) {
     __extends(EnemyPlaneUp, _super);
     function EnemyPlaneUp(ctx, altitude, createProjectile, positionX) {
         var _this = _super.call(this, ctx, positionX, 480) || this;
+        _this.type = "up";
         _this.altitude = altitude;
         _this.shoot = createProjectile;
         _this.sprites = {

@@ -17,6 +17,7 @@ export default class EnemyPlaneUp extends Enemy {
   shadow: Shadow
   constructor(ctx: CanvasRenderingContext2D, altitude: number, createProjectile: (e: Projectile) => void, positionX: number) {
     super(ctx, positionX, 480)
+    this.type = "up"
     this.altitude = altitude
     this.shoot = createProjectile
     this.sprites = {

@@ -72,12 +72,18 @@ var Plane = /** @class */ (function (_super) {
             }
         };
         _this.checkForEnemies = function (array) {
-            var a = false;
+            var a = "black";
             array.forEach(function (element) {
-                if (element != _this && element.altitude >= 30 && _this.altitude >= element.altitude - 5 && _this.altitude <= element.altitude + 5) {
-                    a = true;
+                if (element != _this && element.altitude >= 30 && _this.altitude >= element.altitude - 5 && _this.altitude <= element.altitude + 5 && element.coordinates.y < _this.coordinates.y) {
+                    a = "blue";
                 }
+                else if (element.coordinates.y > _this.coordinates.y && element.type == "up" && _this.altitude >= element.altitude - 5 && _this.altitude <= element.altitude + 5)
+                    a = "brown";
             });
+            if (_this.planeState.overAirport && _this.planeState.velocity.now >= _this.planeState.velocity.max)
+                a = "green";
+            else if (_this.altitude < 20 && _this.planeState.velocity.now >= _this.planeState.velocity.max)
+                a = "yellow";
             return a;
         };
         _this.release = function (event) {
@@ -120,10 +126,6 @@ var Plane = /** @class */ (function (_super) {
             else if (_this.planeState.starting) {
                 _this.planeState.velocity.now = _this.planeState.velocity.max;
             }
-            if (_this.altitude < 20 && _this.planeState.velocity.now >= _this.planeState.velocity.max && Date.now() % 2 == 0)
-                document.getElementById("container").style.backgroundColor = "yellow";
-            else
-                document.getElementById("container").style.backgroundColor = "black";
             if (_this.planeState.landing) {
                 _this.planeState.velocity.now = 0;
                 _this.altitude > 0 ? _this.altitude -= 0.5 : _this.altitude = 0.1;

@@ -3,6 +3,7 @@ import Projectile from "./Projectile.js";
 import Bomb from "./Bomb.js"
 import Shadow from "./Shadow.js";
 import Texture from "./Texture.js";
+import Enemy from "./Enemy.js";
 
 type Directions = "left" | "right" | "up" | "down"
 
@@ -136,13 +137,15 @@ export default class Plane extends ObjectRender {
     }
   }
 
-  checkForEnemies = (array: ObjectRender[]): boolean => {
-    let a = false
+  checkForEnemies = (array: ObjectRender[]): string => {
+    let a = "black"
     array.forEach(element => {
-      if (element != this && element.altitude >= 30 && this.altitude >= element.altitude - 5 && this.altitude <= element.altitude + 5) {
-        a = true
-      }
+      if (element != this && element.altitude >= 30 && this.altitude >= element.altitude - 5 && this.altitude <= element.altitude + 5 && element.coordinates.y < this.coordinates.y) {
+        a = "blue"
+      } else if (element.coordinates.y > this.coordinates.y && (element as Enemy).type == "up" && this.altitude >= element.altitude - 5 && this.altitude <= element.altitude + 5) a = "brown"
     });
+    if (this.planeState.overAirport && this.planeState.velocity.now >= this.planeState.velocity.max) a = "green"
+    else if (this.altitude < 20 && this.planeState.velocity.now >= this.planeState.velocity.max) a = "yellow"
     return a
   }
 
@@ -183,8 +186,6 @@ export default class Plane extends ObjectRender {
     }
     else if (this.planeState.starting) { this.planeState.velocity.now = this.planeState.velocity.max }
 
-    if (this.altitude < 20 && this.planeState.velocity.now >= this.planeState.velocity.max && Date.now() % 2 == 0) document.getElementById("container")!.style.backgroundColor = "yellow"
-    else document.getElementById("container")!.style.backgroundColor = "black"
     if (this.planeState.landing) {
       this.planeState.velocity.now = 0
       this.altitude > 0 ? this.altitude -= 0.5 : this.altitude = 0.1

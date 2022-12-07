@@ -96,24 +96,15 @@ var Game = /** @class */ (function () {
                 this.canvas.width, this.canvas.height, //wielkość wyciętego fragmentu
                 0, 0, // pozycja obrazka na canvasie
                 this.canvas.width, this.canvas.height);
-                if ((_a = this.player) === null || _a === void 0 ? void 0 : _a.checkForEnemies(this.instances.entities)) {
-                    document.getElementById("container").style.backgroundColor = "blue";
-                }
-                else {
-                    document.getElementById("container").style.backgroundColor = "black";
-                }
                 if (Date.now() % 154 === 0 && this.speed.now >= this.speed.max && !this.instances.objects.find(function (e) { return e.isAirport === true; })) {
                     this.instances.entities.push(Math.floor(Math.random() * 2) === 1 ? new EnemyPlaneDown(this.ctx, Math.floor((Math.random() * 40) + 30), function (e) { _this.instances.projectiles.push(e); }, Math.floor(Math.random() * this.canvas.width)) : new EnemyPlaneUp(this.ctx, Math.floor((Math.random() * 70) + 40), function (e) { _this.instances.projectiles.push(e); }, Math.floor(Math.random() * this.canvas.width)));
                 }
-                if ((_b = this.player) === null || _b === void 0 ? void 0 : _b.planeState.destroyed)
+                if ((_a = this.player) === null || _a === void 0 ? void 0 : _a.planeState.destroyed)
                     this.gameOver();
                 if (this.background.y < 0) {
                     this.map = Math.floor(Math.random() * 2);
                     this.background.y = this.background.src.height - this.canvas.height;
                     this.background.x = this.map === 0 ? this.canvas.width : 0;
-                }
-                if (this.background.y < 510 && !this.instances.objects.find(function (e) { return e.isAirport === true; }) && this.player.planeState.fuel < 180) { //&& parseInt(document.getElementById('fuel')!.innerText) < 200) {
-                    this.instances.objects.push(new Airport(this.ctx, 800, -275));
                 }
                 _loop_2 = function (instance) {
                     this_1.instances[instance].forEach(function (e) {
@@ -187,6 +178,21 @@ var Game = /** @class */ (function () {
                     }
                 }
                 if (this.player) {
+                    if (this.background.y < 510 && !this.instances.objects.find(function (e) { return e.isAirport === true; }) && this.player.planeState.fuel < 180) { //&& parseInt(document.getElementById('fuel')!.innerText) < 200) {
+                        this.instances.objects.push(new Airport(this.ctx, 800, -275));
+                    }
+                    if ((_b = this.player) === null || _b === void 0 ? void 0 : _b.checkForEnemies(this.instances.entities)) {
+                        if (this.player.checkForEnemies(this.instances.entities) === "yellow" || this.player.checkForEnemies(this.instances.entities) === "green") {
+                            Date.now() % 400 < 200 ?
+                                document.getElementById("container").style.backgroundColor = this.player.checkForEnemies(this.instances.entities) :
+                                document.getElementById("container").style.backgroundColor = "black";
+                        }
+                        else
+                            document.getElementById("container").style.backgroundColor = this.player.checkForEnemies(this.instances.entities);
+                    }
+                    else {
+                        document.getElementById("container").style.backgroundColor = "black";
+                    }
                     if (this.gravity && this.player.planeState.velocity.now > 4) {
                         this.player.coordinates.y += 0.3;
                     }
